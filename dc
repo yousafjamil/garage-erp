@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Local dev wrapper: docker compose for the "garage" project.  Usage: ./dc ps | ./dc exec -T backend bench ...
+cd "$(dirname "$0")/frappe_docker" || exit 1
+FILES=(-f compose.yaml -f overrides/compose.mariadb.yaml -f overrides/compose.redis.yaml -f overrides/compose.noproxy.yaml)
+[ -f ../compose.garage.yaml ] && FILES+=(-f ../compose.garage.yaml)
+exec docker compose -p garage "${FILES[@]}" "$@"

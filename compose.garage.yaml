@@ -1,0 +1,27 @@
+# Dev override: mount the custom app from the host so edits apply immediately.
+services:
+  backend:
+    environment:
+      PYTHONPATH: /home/frappe/frappe-bench/apps/garage_management
+    volumes:
+      - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
+  scheduler:
+    environment:
+      PYTHONPATH: /home/frappe/frappe-bench/apps/garage_management
+    volumes:
+      - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
+  queue-short:
+    environment:
+      PYTHONPATH: /home/frappe/frappe-bench/apps/garage_management
+    volumes:
+      - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
+  queue-long:
+    environment:
+      PYTHONPATH: /home/frappe/frappe-bench/apps/garage_management
+    volumes:
+      - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
+  websocket:
+    environment:
+      PYTHONPATH: /home/frappe/frappe-bench/apps/garage_management
+    volumes:
+      - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
