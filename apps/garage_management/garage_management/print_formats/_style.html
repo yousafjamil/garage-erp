@@ -1,0 +1,18 @@
+<style>
+.gm { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #1a1a1a; }
+.gm h2.t { text-align:center; margin: 6px 0 10px; font-size: 17px; letter-spacing: 1px; border-bottom: 2px solid #1a1a1a; padding-bottom: 4px; }
+.gm table { width:100%; border-collapse: collapse; margin-bottom: 8px; }
+.gm td, .gm th { padding: 4px 6px; vertical-align: top; }
+.gm .box td { border: 1px solid #bbb; }
+.gm .box td.l { background:#f2f2f2; font-weight:bold; width:18%; }
+.gm .items th { background:#222; color:#fff; text-align:left; font-size:10.5px; }
+.gm .items th.r { text-align:right; }
+.gm .items td { border-bottom: 1px solid #ddd; }
+.gm .r { text-align:right; } .gm .c { text-align:center; }
+.gm .tot td { padding: 3px 6px; } .gm .tot .g td { font-weight:bold; font-size:13px; border-top:2px solid #1a1a1a; }
+.gm .sec { background:#f2f2f2; font-weight:bold; padding:4px 6px; margin:8px 0 4px; border-left:4px solid #222; }
+.gm .sign td { padding-top:34px; border-top:1px solid #888; text-align:center; width:30%; }
+.gm .bad { color:#b00020; font-weight:bold; } .gm .warn { color:#b26a00; font-weight:bold; } .gm .ok { color:#1b6e2e; }
+.gm .small { font-size:10px; color:#555; }
+</style>
+{% if letter_head and not no_letterhead %}<div class="gm-lh">{{ letter_head }}</div>{% endif %}

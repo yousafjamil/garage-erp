@@ -299,3 +299,7 @@ doctype_js = {
     "Quotation": "public/js/quotation.js",
 }
 app_include_js = ["/assets/garage_management/js/garage_vehicle_filter.js"]
+
+scheduler_events = {
+    "daily": ["garage_management.api.dashboard.low_stock_alert"],
+}

@@ -1,0 +1,21 @@
+{% set veh = frappe.db.get_value("Garage Vehicle", doc.vehicle, ["make","model","year","color","vin"], as_dict=True) %}
+<div class="gm">
+<h2 class="t">VEHICLE CHECK-IN &nbsp;|&nbsp; استلام مركبة</h2>
+<table class="box">
+<tr><td class="l">Check-In No</td><td>{{ doc.name }}</td><td class="l">Date / Time</td><td>{{ doc.get_formatted("checkin_datetime") }}</td></tr>
+<tr><td class="l">Customer</td><td>{{ doc.customer_name }}</td><td class="l">Plate No</td><td>{{ doc.plate_number }}</td></tr>
+<tr><td class="l">Vehicle</td><td>{{ veh.make }} {{ veh.model }} {{ veh.year or "" }} {{ veh.color or "" }}</td><td class="l">VIN</td><td>{{ veh.vin or "" }}</td></tr>
+<tr><td class="l">Mileage</td><td>{{ doc.mileage }} km</td><td class="l">Fuel Level</td><td>{{ doc.fuel_level or "" }}</td></tr>
+<tr><td class="l">Keys Received</td><td>{{ "Yes" if doc.keys_received else "No" }}</td><td class="l">Est. Completion</td><td>{{ doc.get_formatted("estimated_completion") }}</td></tr>
+<tr><td class="l">Received By</td><td colspan="3">{{ frappe.db.get_value("User", doc.received_by, "full_name") if doc.received_by else "" }}</td></tr>
+</table>
+<div class="sec">Customer Complaint</div><div>{{ doc.customer_complaint }}</div>
+<div class="sec">Existing Scratches / Dents</div><div>{{ doc.existing_damage or "None recorded" }}</div>
+<div class="sec">Vehicle Condition</div><div>{{ doc.vehicle_condition or "" }}</div>
+<div class="sec">Accessories Received</div><div>{{ doc.accessories_received or "" }}</div>
+{% if doc.photo_front or doc.photo_rear or doc.photo_left or doc.photo_right %}
+<div class="sec">Photos</div><table><tr>{% for p in [doc.photo_front, doc.photo_rear, doc.photo_left, doc.photo_right] %}{% if p %}<td class="c"><img src="{{ p }}" style="max-width:100%;max-height:110px"></td>{% endif %}{% endfor %}</tr></table>
+{% endif %}
+<p class="small">I confirm the above condition of the vehicle at the time of handover. The garage is not responsible for items left in the vehicle that are not listed above.</p>
+<table class="sign"><tr><td>Garage representative</td><td style="border:0"></td><td>Customer signature</td></tr></table>
+</div>

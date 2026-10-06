@@ -51,7 +51,7 @@ def run():
 
     # 6-8 job
     job = frappe.get_doc({"doctype": "Repair Job", "customer": cust.name, "vehicle": veh.name, "check_in": ci.name,
-                          "mileage": 85000, "customer_complaint": ci.customer_complaint, "technician": "Administrator",
+                          "mileage": 85000, "inspection": ins.name, "customer_complaint": ci.customer_complaint, "technician": "Administrator",
                           "services": [{"item_code": "AC Gas Refill", "qty": 1, "labor_hours": 1.5}],
                           "parts": [{"item_code": "AC Compressor", "qty": 1}]}).insert()
     check("job totals 150 + 600", job.total_services == 150 and job.total_parts == 600 and job.estimated_total == 750)
@@ -98,7 +98,7 @@ def run():
     # 15 invoice (draft) -> submit
     sn = api.make_invoice(job.name); si = frappe.get_doc("Sales Invoice", sn)
     check("invoice has vehicle/job, update_stock", si.vehicle == veh.name and si.repair_job == job.name and si.update_stock == 1)
-    check("invoice total 787.5 incl VAT", flt(si.grand_total) == 787.5, f"grand={si.grand_total}")
+    check("invoice total 787.5 incl VAT, no rounding", flt(si.grand_total) == 787.5 and not si.rounded_total, f"grand={si.grand_total} rounded={si.rounded_total}")
     si.submit(); si.reload()
     check("stock reduced by 1", bin_qty("AC Compressor") == start_qty - 1, f"{start_qty} -> {bin_qty('AC Compressor')}")
 

@@ -1,0 +1,27 @@
+{% set veh = frappe.db.get_value("Garage Vehicle", doc.vehicle, ["make","model","year","vin"], as_dict=True) if doc.vehicle else None %}
+{% set trn = frappe.db.get_value("Company", doc.company, "tax_id") %}
+{% set paid = (doc.grand_total or 0) - (doc.outstanding_amount or 0) %}
+<div class="gm">
+<h2 class="t">TAX INVOICE &nbsp;|&nbsp; فاتورة ضريبية</h2>
+<table class="box">
+<tr><td class="l">Invoice No</td><td>{{ doc.name }}</td><td class="l">Date</td><td>{{ doc.get_formatted("posting_date") }}</td></tr>
+<tr><td class="l">Customer</td><td>{{ doc.customer_name }}{% if doc.tax_id %}<br><span class="small">TRN: {{ doc.tax_id }}</span>{% endif %}</td><td class="l">Due Date</td><td>{{ doc.get_formatted("due_date") }}</td></tr>
+<tr><td class="l">Vehicle</td><td>{% if veh %}{{ veh.make }} {{ veh.model }} {{ veh.year or "" }}{% endif %}{% if veh and veh.vin %}<br><span class="small">VIN: {{ veh.vin }}</span>{% endif %}</td><td class="l">Plate No</td><td>{{ doc.plate_number or "" }}</td></tr>
+<tr><td class="l">Job No</td><td>{{ doc.repair_job or "" }}</td><td class="l">Company TRN</td><td>{{ trn or "" }}</td></tr>
+</table>
+<table class="items"><thead><tr><th>#</th><th>Description</th><th class="r">Qty</th><th class="r">Unit Price</th><th class="r">Amount</th></tr></thead><tbody>
+{% for row in doc.items %}<tr><td>{{ loop.index }}</td><td><b>{{ row.item_name }}</b>{% if row.description and row.description != row.item_name %}<br><span class="small">{{ row.description }}</span>{% endif %}</td>
+<td class="r">{{ row.get_formatted("qty", doc) }}</td><td class="r">{{ row.get_formatted("rate", doc) }}</td><td class="r">{{ row.get_formatted("amount", doc) }}</td></tr>{% endfor %}
+</tbody></table>
+<table class="tot" style="width:45%;margin-left:55%">
+{% if doc.discount_amount %}<tr><td>Discount</td><td class="r">{{ doc.get_formatted("discount_amount") }}</td></tr>{% endif %}
+<tr><td>Total (excl. VAT)</td><td class="r">{{ doc.get_formatted("net_total") }}</td></tr>
+{% for t in doc.taxes %}<tr><td>{{ t.description }}</td><td class="r">{{ t.get_formatted("tax_amount", doc) }}</td></tr>{% endfor %}
+<tr class="g"><td>Grand Total</td><td class="r">{{ doc.get_formatted("grand_total") }}</td></tr>
+<tr><td>Paid</td><td class="r">{{ frappe.utils.fmt_money(paid, currency=doc.currency) }}</td></tr>
+<tr><td><b>Outstanding</b></td><td class="r"><b>{{ doc.get_formatted("outstanding_amount") }}</b></td></tr>
+</table>
+{% if doc.in_words %}<div class="small">Amount in words: {{ doc.in_words }}</div>{% endif %}
+{% if doc.terms %}<div class="sec">Terms &amp; Conditions</div><div class="small">{{ doc.terms }}</div>{% endif %}
+<table class="sign"><tr><td>Issued by</td><td style="border:0;width:10%"></td><td>Received by (customer signature)</td></tr></table>
+</div>

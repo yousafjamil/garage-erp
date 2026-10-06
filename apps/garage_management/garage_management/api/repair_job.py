@@ -2,6 +2,10 @@ import frappe
 from frappe.utils import add_days, nowdate, flt
 
 
+def _no_rounding():
+    return frappe.db.get_single_value("Global Defaults", "disable_rounded_total") or 0
+
+
 def _job(name):
     job = frappe.get_doc("Repair Job", name)
     job.check_permission("write")
@@ -20,7 +24,7 @@ def make_quotation(job):
     q.update({
         "quotation_to": "Customer", "party_name": job.customer, "transaction_date": nowdate(),
         "valid_till": add_days(nowdate(), 15), "vehicle": job.vehicle, "repair_job": job.name,
-        "order_type": "Sales",
+        "order_type": "Sales", "disable_rounded_total": _no_rounding(),
     })
     for r in job.services:
         q.append("items", {"item_code": r.item_code, "description": r.description, "qty": r.qty, "rate": r.rate})
@@ -73,12 +77,12 @@ def make_invoice(job):
         frappe.throw("The quotation must be approved by the customer before invoicing.")
     so = make_sales_order(q.name)
     so.delivery_date = nowdate()
-    so.update({"vehicle": job.vehicle, "repair_job": job.name})
+    so.update({"vehicle": job.vehicle, "repair_job": job.name, "disable_rounded_total": _no_rounding()})
     so.insert()
     so.submit()
     si = make_sales_invoice(so.name)
     si.update_stock = 1
-    si.update({"vehicle": job.vehicle, "repair_job": job.name})
+    si.update({"vehicle": job.vehicle, "repair_job": job.name, "disable_rounded_total": _no_rounding()})
     si.insert()
     job.db_set({"sales_order": so.name, "sales_invoice": si.name})
     return si.name

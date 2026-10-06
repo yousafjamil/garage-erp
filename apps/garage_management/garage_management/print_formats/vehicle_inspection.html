@@ -1,0 +1,17 @@
+<div class="gm">
+<h2 class="t">VEHICLE INSPECTION &nbsp;|&nbsp; تقرير الفحص</h2>
+<table class="box">
+<tr><td class="l">Inspection No</td><td>{{ doc.name }}</td><td class="l">Date</td><td>{{ doc.get_formatted("inspection_date") }}</td></tr>
+<tr><td class="l">Customer</td><td>{{ frappe.db.get_value("Customer", doc.customer, "customer_name") }}</td><td class="l">Plate No</td><td>{{ doc.plate_number }}</td></tr>
+<tr><td class="l">Mileage</td><td>{{ doc.mileage or "" }} km</td><td class="l">Inspector</td><td>{{ frappe.db.get_value("User", doc.inspector, "full_name") if doc.inspector else "" }}</td></tr>
+<tr><td class="l">Overall</td><td colspan="3"><b>{{ doc.overall_result }}</b></td></tr>
+</table>
+<table class="items"><thead><tr><th>Component</th><th>Result</th><th>Notes</th></tr></thead><tbody>
+{% for r in doc.items %}<tr><td>{{ r.component }}</td>
+<td class="{% if r.result == 'Critical' or r.result == 'Repair Required' %}bad{% elif r.result == 'Attention Needed' %}warn{% else %}ok{% endif %}">{{ r.result }}</td><td>{{ r.notes or "" }}</td></tr>{% endfor %}
+</tbody></table>
+<div class="sec">Diagnosis</div><div>{{ doc.diagnosis or "" }}</div>
+<div class="sec">Recommended Work</div><div>{{ doc.recommended_work or "" }}</div>
+{% if doc.notes %}<div class="sec">Notes</div><div>{{ doc.notes }}</div>{% endif %}
+<table class="sign"><tr><td>Inspector</td><td style="border:0"></td><td>Customer</td></tr></table>
+</div>

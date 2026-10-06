@@ -1,0 +1,16 @@
+<div class="gm">
+<h2 class="t">PAYMENT RECEIPT &nbsp;|&nbsp; إيصال دفع</h2>
+<table class="box">
+<tr><td class="l">Receipt No</td><td>{{ doc.name }}</td><td class="l">Date</td><td>{{ doc.get_formatted("posting_date") }}</td></tr>
+<tr><td class="l">{{ "Received From" if doc.payment_type == "Receive" else "Paid To" }}</td><td>{{ doc.party_name }}</td><td class="l">Payment Method</td><td>{{ doc.mode_of_payment or "" }}</td></tr>
+<tr><td class="l">Reference</td><td>{{ doc.reference_no or "" }}</td><td class="l">Amount</td><td><b>{{ doc.get_formatted("paid_amount") }}</b></td></tr>
+</table>
+{% if doc.references %}
+<table class="items"><thead><tr><th>Against</th><th>Vehicle</th><th class="r">Invoice Total</th><th class="r">Allocated</th></tr></thead><tbody>
+{% for r in doc.references %}<tr><td>{{ r.reference_doctype }} {{ r.reference_name }}</td>
+<td>{{ frappe.db.get_value("Sales Invoice", r.reference_name, "plate_number") if r.reference_doctype == "Sales Invoice" else "" }}</td>
+<td class="r">{{ r.get_formatted("total_amount", doc) }}</td><td class="r">{{ r.get_formatted("allocated_amount", doc) }}</td></tr>{% endfor %}
+</tbody></table>{% endif %}
+{% if doc.in_words is defined and doc.in_words %}<div class="small">Amount in words: {{ doc.in_words }}</div>{% endif %}
+<table class="sign"><tr><td>Received by</td><td style="border:0"></td><td>Customer signature</td></tr></table>
+</div>

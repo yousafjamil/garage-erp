@@ -35,3 +35,7 @@ services:
   configurator:
     volumes:
       - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8026:8025"

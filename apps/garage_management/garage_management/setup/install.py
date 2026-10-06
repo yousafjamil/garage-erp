@@ -30,9 +30,11 @@ def setup_all():
     configure_accounting()
     seed_catalog()
     create_role_profiles()
-    from garage_management.setup import custom_fields, workflow
+    from garage_management.setup import custom_fields, dashboard, print_formats, workflow
     custom_fields.create()
     workflow.create()
+    print_formats.create()
+    dashboard.create()
     frappe.db.commit()
 
 
@@ -94,6 +96,9 @@ def configure_accounting():
         frappe.get_doc({"doctype": "Item Group", "item_group_name": "Spare Parts",
                         "parent_item_group": "All Item Groups"}).insert(ignore_permissions=True)
     frappe.db.set_single_value("Stock Settings", "default_warehouse", f"Stores - {abbr}")
+    # UAE VAT invoices must show exact fils (no rounding to whole dirhams) and a plain "AED" symbol.
+    frappe.db.set_single_value("Global Defaults", "disable_rounded_total", 1)
+    frappe.db.set_value("Currency", "AED", "symbol", "AED")
 
 
 def seed_catalog():
