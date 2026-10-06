@@ -39,7 +39,7 @@ frappe.ui.form.on("Repair Job", {
 	},
 });
 
-const garage_row_defaults = (cdt, cdn) => {
+const garage_row_defaults = (frm, cdt, cdn) => {
 	const row = locals[cdt][cdn];
 	if (!row.item_code) return;
 	frappe.db.get_value("Item", row.item_code, ["standard_rate", "item_name"]).then((r) => {
@@ -47,7 +47,7 @@ const garage_row_defaults = (cdt, cdn) => {
 		if (cdt === "Repair Job Service" && !row.description) frappe.model.set_value(cdt, cdn, "description", r.message.item_name);
 	});
 };
-const garage_row_amount = (cdt, cdn) => {
+const garage_row_amount = (frm, cdt, cdn) => {
 	const row = locals[cdt][cdn];
 	frappe.model.set_value(cdt, cdn, "amount", (row.qty || 0) * (row.rate || 0));
 };

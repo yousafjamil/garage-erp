@@ -55,7 +55,8 @@ def run():
                           "services": [{"item_code": "AC Gas Refill", "qty": 1, "labor_hours": 1.5}],
                           "parts": [{"item_code": "AC Compressor", "qty": 1}]}).insert()
     check("job totals 150 + 600", job.total_services == 150 and job.total_parts == 600 and job.estimated_total == 750)
-    for a in ("Check In", "Start Inspection", "Inspection Done"):
+    check("job from check-in starts Checked In", job.status == "Checked In", job.status)
+    for a in ("Start Inspection", "Inspection Done"):
         job = apply_workflow(job, a)
     check("job reached Waiting for Quotation", job.status == "Waiting for Quotation")
     check("vehicle Under Repair", frappe.db.get_value("Garage Vehicle", veh.name, "status") == "Under Repair")
@@ -102,6 +103,11 @@ def run():
     si.submit(); si.reload()
     check("stock reduced by 1", bin_qty("AC Compressor") == start_qty - 1, f"{start_qty} -> {bin_qty('AC Compressor')}")
 
+    job.reload()
+    try:
+        apply_workflow(job, "Deliver Vehicle"); check("delivery blocked while unpaid", False)
+    except frappe.ValidationError:
+        check("delivery blocked while unpaid", True); job.reload()
     # 16 payment
     from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
     pe = get_payment_entry("Sales Invoice", sn); pe.mode_of_payment = "Cash"; pe.reference_no = "E2E"; pe.reference_date = nowdate()

@@ -274,10 +274,10 @@
   {
    "fieldname": "override_approval",
    "fieldtype": "Check",
-   "label": "Override approval requirement",
+   "label": "Override rules (approval / payment)",
    "permlevel": 1,
    "no_copy": 1,
-   "description": "Managers/Owner only: allow work to start without an approved quotation."
+   "description": "Managers/Owner only: allow work to start without an approved quotation, or delivery before full payment."
   }
  ],
  "index_web_pages_for_search": 1,

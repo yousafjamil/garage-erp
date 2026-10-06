@@ -5,12 +5,12 @@ ROLES = ["Garage Owner", "Garage Manager", "Receptionist", "Technician"]
 
 ROLE_PROFILES = {
     "Garage Owner": ["Garage Owner", "Garage Manager", "Sales Manager", "Sales User", "Accounts Manager",
-                     "Accounts User", "Stock Manager", "Stock User", "Purchase Manager", "Purchase User"],
-    "Garage Manager": ["Garage Manager", "Sales Manager", "Sales User", "Stock User", "Accounts User", "Purchase User"],
+                     "Accounts User", "Stock Manager", "Stock User", "Purchase Manager", "Purchase User", "Item Manager"],
+    "Garage Manager": ["Garage Manager", "Sales Manager", "Sales User", "Stock User", "Accounts User", "Purchase User", "Item Manager"],
     "Receptionist": ["Receptionist", "Sales User"],
     "Technician": ["Technician", "Stock User"],
     "Accountant": ["Accounts Manager", "Accounts User"],
-    "Inventory Manager": ["Stock Manager", "Stock User", "Purchase Manager", "Purchase User"],
+    "Inventory Manager": ["Stock Manager", "Stock User", "Purchase Manager", "Purchase User", "Item Manager"],
 }
 
 SERVICES = [
@@ -30,11 +30,12 @@ def setup_all():
     configure_accounting()
     seed_catalog()
     create_role_profiles()
-    from garage_management.setup import custom_fields, dashboard, print_formats, workflow
+    from garage_management.setup import custom_fields, dashboard, notifications, print_formats, workflow
     custom_fields.create()
     workflow.create()
     print_formats.create()
     dashboard.create()
+    notifications.create()
     frappe.db.commit()
 
 
@@ -132,11 +133,10 @@ def _make_item(name, group, is_stock, tax, company, abbr):
 
 def create_role_profiles():
     for name, roles in ROLE_PROFILES.items():
-        if frappe.db.exists("Role Profile", name):
-            continue
-        doc = frappe.new_doc("Role Profile")
+        doc = frappe.get_doc("Role Profile", name) if frappe.db.exists("Role Profile", name) else frappe.new_doc("Role Profile")
         doc.role_profile = name
+        have = {r.role for r in doc.get("roles", [])}
         for r in roles:
-            if frappe.db.exists("Role", r):
+            if r not in have and frappe.db.exists("Role", r):
                 doc.append("roles", {"role": r})
-        doc.insert(ignore_permissions=True)
+        doc.save(ignore_permissions=True)

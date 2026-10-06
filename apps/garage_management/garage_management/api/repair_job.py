@@ -47,11 +47,12 @@ def record_approval(quotation, decision, approved_by=None, comments=None):
         frappe.throw("Submit (send) the quotation before recording the customer's decision.")
     if decision == "Customer Approved" and not approved_by:
         frappe.throw("Enter who approved the quotation.")
-    q.db_set({
+    q.update({
         "approval_status": decision, "approval_date": nowdate(), "approved_by": approved_by,
         "approved_amount": q.grand_total if decision == "Customer Approved" else 0,
         "customer_comments": comments,
     })
+    q.save()  # fires notifications; these fields are editable after submit
     q.add_comment("Info", f"{decision} by {approved_by or 'customer'}. {comments or ''}")
     if q.get("repair_job"):
         job = frappe.get_doc("Repair Job", q.repair_job)

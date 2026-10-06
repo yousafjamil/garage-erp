@@ -13,6 +13,11 @@ VEHICLE_STATUS = {
 
 
 class RepairJob(Document):
+    def after_insert(self):
+        # a job raised from a check-in starts life as "Checked In" (workflows must begin at their first state)
+        if self.check_in and self.status == "Draft":
+            self.db_set("status", "Checked In")
+
     def validate(self):
         self.title = f"{self.customer_name or self.customer} - {self.plate_number or self.vehicle}"
         self.validate_vehicle_owner()
@@ -61,8 +66,13 @@ class RepairJob(Document):
             if not self.quotation or frappe.db.get_value("Quotation", self.quotation, "approval_status") != "Customer Approved":
                 frappe.throw("The customer has not approved the quotation yet. Repair cannot start. "
                              "A Garage Manager/Owner can tick 'Override approval requirement'.")
-        if self.status == "Completed" and not self.sales_invoice:
-            frappe.throw("Create the invoice (Create > Invoice) before delivering the vehicle.")
+        if self.status == "Completed":
+            if not self.sales_invoice:
+                frappe.throw("Create the invoice (Create > Invoice) before delivering the vehicle.")
+            outstanding = frappe.db.get_value("Sales Invoice", self.sales_invoice, "outstanding_amount")
+            if frappe.db.get_value("Sales Invoice", self.sales_invoice, "docstatus") != 1 or flt(outstanding) > 0:
+                frappe.throw(f"Invoice {self.sales_invoice} must be submitted and fully paid before delivery "
+                             "(outstanding: {0}). A Garage Manager/Owner can tick 'Override rules'.".format(flt(outstanding)))
 
     def sync_vehicle(self):
         updates = {}
