@@ -2,4 +2,3 @@
 garage_management.patches.v1_0.create_roles
 
 [post_model_sync]
-garage_management.patches.v1_0.setup_garage

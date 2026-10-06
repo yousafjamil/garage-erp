@@ -30,6 +30,9 @@ def setup_all():
     configure_accounting()
     seed_catalog()
     create_role_profiles()
+    from garage_management.setup import custom_fields, workflow
+    custom_fields.create()
+    workflow.create()
     frappe.db.commit()
 
 

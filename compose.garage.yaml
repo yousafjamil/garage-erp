@@ -25,3 +25,13 @@ services:
       PYTHONPATH: /home/frappe/frappe-bench/apps/garage_management
     volumes:
       - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
+  frontend:
+    command:
+      - bash
+      - -c
+      - ln -sfn /home/frappe/frappe-bench/apps/garage_management/garage_management/public /home/frappe/frappe-bench/assets/garage_management && exec nginx-entrypoint.sh
+    volumes:
+      - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management
+  configurator:
+    volumes:
+      - ../apps/garage_management:/home/frappe/frappe-bench/apps/garage_management

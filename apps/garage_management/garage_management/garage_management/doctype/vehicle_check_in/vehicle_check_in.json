@@ -1,0 +1,272 @@
+{
+ "actions": [],
+ "creation": "2026-10-07 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "customer_name",
+  "vehicle",
+  "plate_number",
+  "cb1",
+  "checkin_datetime",
+  "mileage",
+  "fuel_level",
+  "estimated_completion",
+  "received_by",
+  "sb_complaint",
+  "customer_complaint",
+  "existing_damage",
+  "cb2",
+  "vehicle_condition",
+  "keys_received",
+  "accessories_received",
+  "sb_photos",
+  "photo_front",
+  "photo_rear",
+  "cb3",
+  "photo_left",
+  "photo_right",
+  "sb_notes",
+  "notes",
+  "repair_job"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "fetch_from": "customer.customer_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Garage Vehicle",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "plate_number",
+   "fieldtype": "Data",
+   "label": "Plate Number",
+   "fetch_from": "vehicle.plate_number",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_global_search": 1
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "checkin_datetime",
+   "fieldtype": "Datetime",
+   "label": "Check-In Date/Time",
+   "reqd": 1,
+   "default": "Now",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "mileage",
+   "fieldtype": "Int",
+   "label": "Mileage (km)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fuel_level",
+   "fieldtype": "Select",
+   "label": "Fuel Level",
+   "options": "\nEmpty\n1/4\n1/2\n3/4\nFull"
+  },
+  {
+   "fieldname": "estimated_completion",
+   "fieldtype": "Date",
+   "label": "Estimated Completion"
+  },
+  {
+   "fieldname": "received_by",
+   "fieldtype": "Link",
+   "label": "Received By",
+   "options": "User",
+   "default": "__user"
+  },
+  {
+   "fieldname": "sb_complaint",
+   "fieldtype": "Section Break",
+   "label": "Complaint & Condition"
+  },
+  {
+   "fieldname": "customer_complaint",
+   "fieldtype": "Text",
+   "label": "Customer Complaint",
+   "reqd": 1
+  },
+  {
+   "fieldname": "existing_damage",
+   "fieldtype": "Small Text",
+   "label": "Existing Scratches / Dents"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "vehicle_condition",
+   "fieldtype": "Small Text",
+   "label": "Vehicle Condition"
+  },
+  {
+   "fieldname": "keys_received",
+   "fieldtype": "Check",
+   "label": "Keys Received",
+   "default": "1"
+  },
+  {
+   "fieldname": "accessories_received",
+   "fieldtype": "Small Text",
+   "label": "Accessories Received"
+  },
+  {
+   "fieldname": "sb_photos",
+   "fieldtype": "Section Break",
+   "label": "Photos (use sidebar Attachments for more)",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "photo_front",
+   "fieldtype": "Attach Image",
+   "label": "Photo Front"
+  },
+  {
+   "fieldname": "photo_rear",
+   "fieldtype": "Attach Image",
+   "label": "Photo Rear"
+  },
+  {
+   "fieldname": "cb3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "photo_left",
+   "fieldtype": "Attach Image",
+   "label": "Photo Left"
+  },
+  {
+   "fieldname": "photo_right",
+   "fieldtype": "Attach Image",
+   "label": "Photo Right"
+  },
+  {
+   "fieldname": "sb_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "repair_job",
+   "fieldtype": "Link",
+   "label": "Repair Job",
+   "options": "Repair Job",
+   "read_only": 1,
+   "no_copy": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-07 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Garage Management",
+ "name": "Vehicle Check-In",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Garage Owner",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Garage Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Receptionist",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Technician",
+   "permlevel": 0,
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Accounts User",
+   "permlevel": 0,
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "allow_import": 1,
+ "autoname": "format:CHK-{YYYY}-{#####}",
+ "naming_rule": "Expression"
+}

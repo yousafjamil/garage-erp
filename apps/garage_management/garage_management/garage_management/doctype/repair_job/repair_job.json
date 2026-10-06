@@ -1,0 +1,417 @@
+{
+ "actions": [],
+ "creation": "2026-10-07 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "customer",
+  "customer_name",
+  "vehicle",
+  "plate_number",
+  "vehicle_model",
+  "cb1",
+  "status",
+  "job_date",
+  "technician",
+  "mileage",
+  "estimated_completion",
+  "actual_completion",
+  "sb_links",
+  "check_in",
+  "inspection",
+  "cb2",
+  "quotation",
+  "approval_status",
+  "cb3",
+  "sales_order",
+  "sales_invoice",
+  "sb_work",
+  "customer_complaint",
+  "cb4",
+  "diagnosis",
+  "sb_services",
+  "services",
+  "sb_parts",
+  "parts",
+  "sb_totals",
+  "total_services",
+  "total_parts",
+  "cb5",
+  "estimated_total",
+  "sb_notes",
+  "notes",
+  "override_approval"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "hidden": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "fetch_from": "customer.customer_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Garage Vehicle",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "plate_number",
+   "fieldtype": "Data",
+   "label": "Plate Number",
+   "fetch_from": "vehicle.plate_number",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_global_search": 1
+  },
+  {
+   "fieldname": "vehicle_model",
+   "fieldtype": "Data",
+   "label": "Vehicle Model",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nChecked In\nInspection\nWaiting for Quotation\nWaiting for Customer Approval\nApproved\nIn Repair\nQuality Check\nReady for Delivery\nCompleted\nCancelled",
+   "default": "Draft",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "job_date",
+   "fieldtype": "Date",
+   "label": "Job Date",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "technician",
+   "fieldtype": "Link",
+   "label": "Technician",
+   "options": "User",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "mileage",
+   "fieldtype": "Int",
+   "label": "Mileage (km)"
+  },
+  {
+   "fieldname": "estimated_completion",
+   "fieldtype": "Date",
+   "label": "Estimated Completion"
+  },
+  {
+   "fieldname": "actual_completion",
+   "fieldtype": "Date",
+   "label": "Actual Completion",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sb_links",
+   "fieldtype": "Section Break",
+   "label": "Related Documents"
+  },
+  {
+   "fieldname": "check_in",
+   "fieldtype": "Link",
+   "label": "Check In",
+   "options": "Vehicle Check-In"
+  },
+  {
+   "fieldname": "inspection",
+   "fieldtype": "Link",
+   "label": "Inspection",
+   "options": "Vehicle Inspection"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quotation",
+   "fieldtype": "Link",
+   "label": "Quotation",
+   "options": "Quotation",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "approval_status",
+   "fieldtype": "Data",
+   "label": "Approval Status",
+   "fetch_from": "quotation.approval_status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "label": "Sales Order",
+   "options": "Sales Order",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sb_work",
+   "fieldtype": "Section Break",
+   "label": "Complaint & Diagnosis"
+  },
+  {
+   "fieldname": "customer_complaint",
+   "fieldtype": "Text",
+   "label": "Customer Complaint"
+  },
+  {
+   "fieldname": "cb4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "diagnosis",
+   "fieldtype": "Text",
+   "label": "Diagnosis"
+  },
+  {
+   "fieldname": "sb_services",
+   "fieldtype": "Section Break",
+   "label": "Services & Labor"
+  },
+  {
+   "fieldname": "services",
+   "fieldtype": "Table",
+   "label": "Services",
+   "options": "Repair Job Service"
+  },
+  {
+   "fieldname": "sb_parts",
+   "fieldtype": "Section Break",
+   "label": "Spare Parts"
+  },
+  {
+   "fieldname": "parts",
+   "fieldtype": "Table",
+   "label": "Parts",
+   "options": "Repair Job Part"
+  },
+  {
+   "fieldname": "sb_totals",
+   "fieldtype": "Section Break",
+   "label": "Estimate (before VAT)"
+  },
+  {
+   "fieldname": "total_services",
+   "fieldtype": "Currency",
+   "label": "Total Services",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_parts",
+   "fieldtype": "Currency",
+   "label": "Total Parts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "estimated_total",
+   "fieldtype": "Currency",
+   "label": "Estimated Total",
+   "read_only": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "sb_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "override_approval",
+   "fieldtype": "Check",
+   "label": "Override approval requirement",
+   "permlevel": 1,
+   "no_copy": 1,
+   "description": "Managers/Owner only: allow work to start without an approved quotation."
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-07 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Garage Management",
+ "name": "Repair Job",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Garage Owner",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Garage Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Receptionist",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Technician",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Accounts User",
+   "permlevel": 0,
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Stock User",
+   "permlevel": 0,
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Garage Owner",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Garage Manager",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "System Manager",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "allow_import": 1,
+ "autoname": "format:RJ-{YYYY}-{#####}",
+ "naming_rule": "Expression",
+ "title_field": "title",
+ "show_title_field_in_link": 1,
+ "search_fields": "plate_number,customer_name,status"
+}

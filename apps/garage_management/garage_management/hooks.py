@@ -6,6 +6,7 @@ app_email = "Candlearw@gmail.com"
 app_license = "mit"
 
 after_install = "garage_management.setup.install.after_install"
+after_migrate = "garage_management.setup.install.setup_all"
 
 # Apps
 # ------------------
@@ -274,3 +275,27 @@ after_install = "garage_management.setup.install.after_install"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+
+# Garage hooks
+permission_query_conditions = {
+    "Repair Job": "garage_management.garage_management.doctype.repair_job.repair_job.get_permission_query_conditions",
+}
+has_permission = {
+    "Repair Job": "garage_management.garage_management.doctype.repair_job.repair_job.has_permission",
+}
+override_doctype_dashboards = {
+    "Customer": "garage_management.api.dashboards.customer_dashboard",
+}
+global_search_doctypes = {
+    "Default": [
+        {"doctype": "Garage Vehicle", "index": 0},
+        {"doctype": "Repair Job", "index": 1},
+        {"doctype": "Vehicle Check-In", "index": 2},
+        {"doctype": "Vehicle Inspection", "index": 3},
+    ]
+}
+doctype_js = {
+    "Quotation": "public/js/quotation.js",
+}
+app_include_js = ["/assets/garage_management/js/garage_vehicle_filter.js"]
