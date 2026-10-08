@@ -30,6 +30,7 @@ def setup_all():
     configure_accounting()
     seed_catalog()
     create_role_profiles()
+    configure_search()
     from garage_management.setup import custom_fields, dashboard, notifications, print_formats, workflow
     custom_fields.create()
     workflow.create()
@@ -129,6 +130,19 @@ def _make_item(name, group, is_stock, tax, company, abbr):
     if frappe.db.exists("Item Tax Template", tax):
         doc.append("taxes", {"item_tax_template": tax})
     doc.insert(ignore_permissions=True)
+
+
+def configure_search():
+    """Make vehicles, jobs, check-ins and inspections findable from the global search bar."""
+    gs = frappe.get_single("Global Search Settings")
+    have = {r.document_type for r in gs.allowed_in_global_search}
+    for dt in ("Garage Vehicle", "Repair Job", "Vehicle Check-In", "Vehicle Inspection"):
+        if dt not in have:
+            gs.append("allowed_in_global_search", {"document_type": dt})
+    gs.save(ignore_permissions=True)
+    from frappe.custom.doctype.property_setter.property_setter import make_property_setter
+    # find customers by phone number in link fields and list search
+    make_property_setter("Customer", None, "search_fields", "customer_name,customer_group,territory,mobile_no", "Data", for_doctype=True)
 
 
 def create_role_profiles():

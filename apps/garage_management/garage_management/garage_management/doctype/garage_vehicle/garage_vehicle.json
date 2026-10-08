@@ -87,7 +87,8 @@
    "fieldtype": "Data",
    "label": "Customer Phone",
    "fetch_from": "customer.mobile_no",
-   "read_only": 1
+   "read_only": 1,
+   "in_global_search": 1
   },
   {
    "fieldname": "sb_vehicle",
@@ -293,5 +294,5 @@
  "naming_rule": "Expression",
  "title_field": "plate_number",
  "show_title_field_in_link": 1,
- "search_fields": "plate_number,vin,customer_name,make,model"
+ "search_fields": "plate_number,vin,customer_name,customer_phone,make,model"
 }

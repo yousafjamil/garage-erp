@@ -1,0 +1,6 @@
+*
+!apps/garage_management
+!deploy
+**/__pycache__
+**/*.pyc
+**/node_modules

@@ -3,3 +3,6 @@ frappe_docker/.env
 .env
 *.sql.gz
 .DS_Store
+
+deploy/.env.prod
+deploy/.env.rehearsal
