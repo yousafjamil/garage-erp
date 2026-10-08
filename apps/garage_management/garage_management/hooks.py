@@ -298,10 +298,12 @@ global_search_doctypes = {
 doctype_js = {
     "Quotation": "public/js/quotation.js",
 }
-app_include_js = ["/assets/garage_management/js/garage_vehicle_filter.js"]
+app_include_js = ["/assets/garage_management/js/garage_vehicle_filter.js", "/assets/garage_management/js/garage_actions.js", "/assets/garage_management/js/simple_forms.js"]
 
 scheduler_events = {
     "daily": ["garage_management.api.dashboard.low_stock_alert"],
+    # new customers / vehicles / jobs become searchable within a minute (ERPNext's default is 15 minutes)
+    "cron": {"* * * * *": ["frappe.utils.global_search.sync_global_search"]},
 }
 
 # Appears on the app launcher; also the system default app so users land straight on the Garage page.
@@ -320,3 +322,5 @@ get_website_user_home_page = "garage_management.api.home.get_home"
 extend_bootinfo = ["garage_management.api.whitelabel.extend_bootinfo"]
 override_whitelisted_methods = {"frappe.apps.get_apps": "garage_management.api.whitelabel.get_apps"}
 email_brand_image = "assets/garage_management/images/logo.png"
+
+doc_events = {"Customer": {"on_update": "garage_management.api.customer.sync_contact"}}

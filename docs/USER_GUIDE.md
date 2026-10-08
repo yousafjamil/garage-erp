@@ -41,6 +41,12 @@ The menu only shows what the person is allowed to use (a receptionist has no Inv
 **their own** jobs). Owner and Accountant also have the full accounting, stock and purchasing screens when needed. Nothing is deleted —
 it is only kept out of the way.
 
+## Simple screens
+Quotation, Invoice, Customer, Item and Payment forms show only what a garage uses (the accounting, shipping, price-list, sales-team and tax-withholding
+sections are hidden). Every document has big **Print**, **Download PDF** and **Email** buttons at the top, and a repair job shows a blue line saying
+what to do next plus a big **Next** button. When someone really needs everything: open the **⋯ menu → Show all fields** (and **Simple view** to come back).
+A new customer needs only **Name, Type, Mobile and Email** — the phone number then finds the customer in the search bar.
+
 ## Roles (Role Profiles)
 | Profile | For | Can do |
 |---|---|---|

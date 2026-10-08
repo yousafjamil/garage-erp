@@ -7,6 +7,7 @@ frappe.ui.form.on("Repair Job", {
 	},
 	refresh(frm) {
 		if (frm.is_new()) return;
+		garage_next_step(frm);
 		const api = "garage_management.api.repair_job.";
 		frm.add_custom_button(__("Vehicle History"), () =>
 			frappe.set_route("query-report", "Vehicle Service History", { vehicle: frm.doc.vehicle }));
@@ -53,3 +54,35 @@ const garage_row_amount = (frm, cdt, cdn) => {
 };
 ["Repair Job Service", "Repair Job Part"].forEach((dt) =>
 	frappe.ui.form.on(dt, { item_code: garage_row_defaults, qty: garage_row_amount, rate: garage_row_amount }));
+
+// One clear sentence and one big button for "what do I do next?"
+const GARAGE_HINTS = {
+	"Draft": "Press Next to check the car in.",
+	"Checked In": "Add the inspection, then press Next to start it.",
+	"Inspection": "Inspect the car (Create > Inspection), then press Next.",
+	"Waiting for Quotation": "Add services and parts below, then Create > Quotation, send it, and press Next.",
+	"Waiting for Customer Approval": "Open the quotation and press Customer Decision > Customer Approved (or Rejected).",
+	"Approved": "The customer approved. Press Next to start the repair.",
+	"In Repair": "Repair the car. When done press Next to send it to quality check.",
+	"Quality Check": "Check the work. If it is good press Next (manager).",
+	"Ready for Delivery": "Create > Invoice, submit it and record the payment. Then press Next to deliver the car.",
+	"Completed": "Delivered. The job is finished.",
+	"Cancelled": "This job was cancelled.",
+};
+const GARAGE_SKIP = ["Cancel Job", "Needs Rework", "Revise Quotation", "Customer Approved"];
+
+function garage_next_step(frm) {
+	const hint = GARAGE_HINTS[frm.doc.status];
+	if (hint) frm.dashboard.set_headline(`<b>${__(frm.doc.status)}</b> &mdash; ${__(hint)}`);
+	if (frm.is_dirty()) return;
+	if (frm.doc.status === "Waiting for Customer Approval" && frm.doc.quotation) {
+		frm.page.set_primary_action(__("Open Quotation"), () => frappe.set_route("Form", "Quotation", frm.doc.quotation));
+		return;
+	}
+	frappe.xcall("frappe.model.workflow.get_transitions", { doc: frm.doc }).then((ts) => {
+		const t = (ts || []).find((x) => !GARAGE_SKIP.includes(x.action));
+		if (!t) return;
+		frm.page.set_primary_action(__("Next: {0}", [__(t.action)]), () =>
+			frappe.xcall("frappe.model.workflow.apply_workflow", { doc: frm.doc, action: t.action }).then(() => frm.reload_doc()));
+	});
+}

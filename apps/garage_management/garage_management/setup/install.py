@@ -32,7 +32,9 @@ def setup_all():
     create_role_profiles()
     configure_search()
     simplify_for_small_garage()
-    from garage_management.setup import whitelabel
+    from garage_management.setup import simplify_lists, whitelabel
+    simplify_lists.apply()
+    simplify_lists.set_defaults()
     whitelabel.apply()
     from garage_management.setup import custom_fields, dashboard, notifications, print_formats, workflow
     custom_fields.create()
