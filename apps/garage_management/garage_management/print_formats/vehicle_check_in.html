@@ -16,6 +16,6 @@
 {% if doc.photo_front or doc.photo_rear or doc.photo_left or doc.photo_right %}
 <div class="sec">Photos</div><table><tr>{% for p in [doc.photo_front, doc.photo_rear, doc.photo_left, doc.photo_right] %}{% if p %}<td class="c"><img src="{{ p }}" style="max-width:100%;max-height:110px"></td>{% endif %}{% endfor %}</tr></table>
 {% endif %}
-<p class="small">I confirm the above condition of the vehicle at the time of handover. The garage is not responsible for items left in the vehicle that are not listed above.</p>
+{% if gs.checkin_disclaimer %}<p class="small">{{ gs.checkin_disclaimer }}</p>{% endif %}
 <table class="sign"><tr><td>Garage representative</td><td style="border:0"></td><td>Customer signature</td></tr></table>
 </div>

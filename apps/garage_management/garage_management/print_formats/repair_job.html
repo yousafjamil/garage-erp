@@ -1,5 +1,5 @@
 <div class="gm">
-<h2 class="t">JOB CARD &nbsp;|&nbsp; بطاقة عمل</h2>
+<h2 class="t">{{ gs.jobcard_title or "JOB CARD" }} &nbsp;|&nbsp; {{ gs.jobcard_title_ar or "" }}</h2>
 <table class="box">
 <tr><td class="l">Job No</td><td>{{ doc.name }}</td><td class="l">Date</td><td>{{ doc.get_formatted("job_date") }}</td></tr>
 <tr><td class="l">Customer</td><td>{{ doc.customer_name }}</td><td class="l">Status</td><td>{{ doc.status }}</td></tr>
@@ -19,5 +19,6 @@
 </tbody></table>
 <table class="tot" style="width:45%;margin-left:55%"><tr class="g"><td>Estimate (excl. VAT)</td><td class="r">{{ doc.get_formatted("estimated_total") }}</td></tr></table>
 {% if doc.notes %}<div class="sec">Notes</div><div>{{ doc.notes }}</div>{% endif %}
+{% if gs.jobcard_note %}<p class="small">{{ gs.jobcard_note }}</p>{% endif %}
 <table class="sign"><tr><td>Technician</td><td style="border:0"></td><td>Quality check</td><td style="border:0"></td><td>Customer (on delivery)</td></tr></table>
 </div>

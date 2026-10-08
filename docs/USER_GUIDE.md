@@ -18,6 +18,14 @@ for approval / in repair / ready, today's invoices, outstanding payments, monthl
 **Service history:** open any vehicle → **Service History** button (or Reports → Vehicle Service History): every job with
 date, mileage, complaint, diagnosis, services, parts, technician, invoice, paid/outstanding.
 
+## Making the system yours (no developer needed)
+Open **Garage → Garage Settings** (Owner/Manager). Everything below updates the whole system and all printed/emailed documents when you press Save:
+- **Identity:** garage name (English/Arabic), tagline, **logo** (login page, menu bar, browser tab), accent colour of document tables.
+- **Letterhead:** upload your own **header** and **footer** images (full-width banners), or switch *Letterhead Style* to **Text** to build a simple header/footer from name, phones, email and address.
+- **Quotation / Invoice / Job Card / Check-In / Receipt:** titles (English + Arabic), terms & conditions, **bank/payment details**, notes, the check-in declaration, a thank-you line, and how many days a quotation is valid.
+Tip: tables and numbers come from the system and cannot be broken by editing these texts. For a completely different layout, duplicate the print format (Printing → Print Format) — see docs/PRINT_FORMATS.md.
+The ERPNext/Frappe names and logos are removed from the screens, menus, emails and documents; the garage's own name and logo are shown instead.
+
 ## Customer 360
 *Reports → Customer 360* → pick a customer (type name or phone): contact details, all their vehicles, every repair job,
 **total spent** and **still owes**, last visit. Phone search works when the phone is saved on the customer's primary

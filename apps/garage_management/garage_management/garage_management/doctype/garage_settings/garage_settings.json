@@ -1,0 +1,271 @@
+{
+ "actions": [],
+ "creation": "2026-10-09 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sb_brand",
+  "garage_name",
+  "garage_name_ar",
+  "tagline",
+  "cb1",
+  "logo",
+  "accent_color",
+  "sb_lh",
+  "letterhead_mode",
+  "header_image",
+  "footer_image",
+  "cb2",
+  "contact_phones",
+  "contact_email",
+  "contact_address",
+  "sb_q",
+  "quotation_title",
+  "quotation_title_ar",
+  "quotation_validity_days",
+  "quotation_terms",
+  "sb_i",
+  "invoice_title",
+  "invoice_title_ar",
+  "invoice_terms",
+  "bank_details",
+  "sb_o",
+  "jobcard_title",
+  "jobcard_title_ar",
+  "jobcard_note",
+  "checkin_disclaimer",
+  "receipt_note",
+  "thank_you_note",
+  "initialized"
+ ],
+ "fields": [
+  {
+   "fieldname": "sb_brand",
+   "fieldtype": "Section Break",
+   "label": "Garage Identity"
+  },
+  {
+   "fieldname": "garage_name",
+   "fieldtype": "Data",
+   "label": "Garage Name",
+   "reqd": 1,
+   "default": "Candle Auto Repair Workshop",
+   "description": "Shown in the browser title, login page and emails."
+  },
+  {
+   "fieldname": "garage_name_ar",
+   "fieldtype": "Data",
+   "label": "Garage Name (Arabic)",
+   "default": "ورشة كاندل لاصلاح السيارات"
+  },
+  {
+   "fieldname": "tagline",
+   "fieldtype": "Data",
+   "label": "Tagline"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo",
+   "description": "Square image, 512px or larger. Used on the login page, menu bar and browser tab."
+  },
+  {
+   "fieldname": "accent_color",
+   "fieldtype": "Color",
+   "label": "Document Accent Colour",
+   "default": "#0b2a6b",
+   "description": "Table headers and headings on printed documents."
+  },
+  {
+   "fieldname": "sb_lh",
+   "fieldtype": "Section Break",
+   "label": "Letterhead (printed documents & emails)"
+  },
+  {
+   "fieldname": "letterhead_mode",
+   "fieldtype": "Select",
+   "label": "Letterhead Style",
+   "options": "Images\nText",
+   "default": "Images",
+   "description": "Images = use the header/footer pictures below. Text = simple text header and footer built from the details below."
+  },
+  {
+   "fieldname": "header_image",
+   "fieldtype": "Attach Image",
+   "label": "Header Image",
+   "description": "Full-width banner at the top of every document."
+  },
+  {
+   "fieldname": "footer_image",
+   "fieldtype": "Attach Image",
+   "label": "Footer Image",
+   "description": "Full-width banner at the bottom of every page."
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_phones",
+   "fieldtype": "Small Text",
+   "label": "Phone Numbers",
+   "description": "One per line or separated by spaces."
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fieldname": "contact_address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "sb_q",
+   "fieldtype": "Section Break",
+   "label": "Quotation"
+  },
+  {
+   "fieldname": "quotation_title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "default": "QUOTATION"
+  },
+  {
+   "fieldname": "quotation_title_ar",
+   "fieldtype": "Data",
+   "label": "Title (Arabic)",
+   "default": "عرض سعر"
+  },
+  {
+   "fieldname": "quotation_validity_days",
+   "fieldtype": "Int",
+   "label": "Valid for (days)",
+   "default": "15"
+  },
+  {
+   "fieldname": "quotation_terms",
+   "fieldtype": "Text Editor",
+   "label": "Terms & Conditions",
+   "description": "Printed on quotations that have no terms of their own."
+  },
+  {
+   "fieldname": "sb_i",
+   "fieldtype": "Section Break",
+   "label": "Tax Invoice"
+  },
+  {
+   "fieldname": "invoice_title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "default": "TAX INVOICE"
+  },
+  {
+   "fieldname": "invoice_title_ar",
+   "fieldtype": "Data",
+   "label": "Title (Arabic)",
+   "default": "فاتورة ضريبية"
+  },
+  {
+   "fieldname": "invoice_terms",
+   "fieldtype": "Text Editor",
+   "label": "Terms & Conditions"
+  },
+  {
+   "fieldname": "bank_details",
+   "fieldtype": "Small Text",
+   "label": "Bank / Payment Details",
+   "description": "Printed on invoices, e.g. bank name, IBAN, account name."
+  },
+  {
+   "fieldname": "sb_o",
+   "fieldtype": "Section Break",
+   "label": "Other Documents"
+  },
+  {
+   "fieldname": "jobcard_title",
+   "fieldtype": "Data",
+   "label": "Job Card Title",
+   "default": "JOB CARD"
+  },
+  {
+   "fieldname": "jobcard_title_ar",
+   "fieldtype": "Data",
+   "label": "Job Card Title (Arabic)",
+   "default": "بطاقة عمل"
+  },
+  {
+   "fieldname": "jobcard_note",
+   "fieldtype": "Small Text",
+   "label": "Job Card Note"
+  },
+  {
+   "fieldname": "checkin_disclaimer",
+   "fieldtype": "Small Text",
+   "label": "Check-In Declaration",
+   "default": "I confirm the above condition of the vehicle at the time of handover. The garage is not responsible for items left in the vehicle that are not listed above."
+  },
+  {
+   "fieldname": "receipt_note",
+   "fieldtype": "Small Text",
+   "label": "Payment Receipt Note"
+  },
+  {
+   "fieldname": "thank_you_note",
+   "fieldtype": "Small Text",
+   "label": "Thank-You Line",
+   "description": "Printed at the bottom of quotations and invoices.",
+   "default": "Thank you for choosing us."
+  },
+  {
+   "fieldname": "initialized",
+   "fieldtype": "Check",
+   "label": "Initialized",
+   "hidden": 1,
+   "read_only": 1
+  }
+ ],
+ "issingle": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-09 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Garage Management",
+ "name": "Garage Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Garage Owner",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "Garage Manager",
+   "permlevel": 0,
+   "read": 1,
+   "write": 1,
+   "print": 1,
+   "email": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

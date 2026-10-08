@@ -47,6 +47,7 @@ SHORTCUTS = [  # label, doctype/report, type, view
     ("Invoices", "Sales Invoice", "DocType", "List"),
     ("Payments", "Payment Entry", "DocType", "List"),
     ("Items (Parts & Services)", "Item", "DocType", "List"),
+    ("Garage Settings", "Garage Settings", "DocType", ""),
 ]
 
 REPORT_LINKS = ["Customer 360", "Vehicle Service History", "Jobs by Status", "Technician Performance", "Parts Used",
@@ -125,7 +126,7 @@ def _sidebar_and_icon():
                 ("Repair Jobs", "wrench", "Repair Job"), ("Vehicles", "car", "Garage Vehicle"),
                 ("Customers", "users", "Customer"), ("Quotations", "receipt-text", "Quotation"),
                 ("Invoices", "receipt", "Sales Invoice"), ("Payments", "wallet", "Payment Entry"),
-                ("Parts & Services", "package", "Item"))]
+                ("Parts & Services", "package", "Item"), ("Settings", "settings", "Garage Settings"))]
         items += [(r, "", "Report", r) for r in REPORT_LINKS[:6]]
         for label, icon, ltype, target in items:
             sb.append("items", {"label": label, "icon": icon, "link_type": ltype, "link_to": target, "type": "Link",

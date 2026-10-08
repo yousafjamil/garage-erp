@@ -23,7 +23,7 @@ def make_quotation(job):
     q = frappe.new_doc("Quotation")
     q.update({
         "quotation_to": "Customer", "party_name": job.customer, "transaction_date": nowdate(),
-        "valid_till": add_days(nowdate(), 15), "vehicle": job.vehicle, "repair_job": job.name,
+        "valid_till": add_days(nowdate(), frappe.db.get_single_value("Garage Settings", "quotation_validity_days") or 15), "vehicle": job.vehicle, "repair_job": job.name,
         "order_type": "Sales", "disable_rounded_total": _no_rounding(),
     })
     for r in job.services:

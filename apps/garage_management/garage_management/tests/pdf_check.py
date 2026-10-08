@@ -15,7 +15,7 @@ def run():
     for dt, name, pf in docs:
         if not name:
             print("PDF SKIP", dt); continue
-        pdf = frappe.get_print(dt, name, print_format=pf, as_pdf=True, letterhead="Candle Auto Repair")
+        pdf = frappe.get_print(dt, name, print_format=pf, as_pdf=True, letterhead=frappe.db.get_value("Company", frappe.defaults.get_global_default("company"), "default_letter_head"))
         path = f"/tmp/{pf.replace(' ', '_')}.pdf"
         open(path, "wb").write(pdf); print("PDF OK", pf, len(pdf), "bytes", path)
     # email the quotation (PDF attached) to the dev mail catcher

@@ -2,7 +2,7 @@
 {% set trn = frappe.db.get_value("Company", doc.company, "tax_id") %}
 {% set paid = (doc.grand_total or 0) - (doc.outstanding_amount or 0) %}
 <div class="gm">
-<h2 class="t">TAX INVOICE &nbsp;|&nbsp; فاتورة ضريبية</h2>
+<h2 class="t">{{ gs.invoice_title or "TAX INVOICE" }} &nbsp;|&nbsp; {{ gs.invoice_title_ar or "" }}</h2>
 <table class="box">
 <tr><td class="l">Invoice No</td><td>{{ doc.name }}</td><td class="l">Date</td><td>{{ doc.get_formatted("posting_date") }}</td></tr>
 <tr><td class="l">Customer</td><td>{{ doc.customer_name }}{% if doc.tax_id %}<br><span class="small">TRN: {{ doc.tax_id }}</span>{% endif %}</td><td class="l">Due Date</td><td>{{ doc.get_formatted("due_date") }}</td></tr>
@@ -22,6 +22,8 @@
 <tr><td><b>Outstanding</b></td><td class="r"><b>{{ doc.get_formatted("outstanding_amount") }}</b></td></tr>
 </table>
 {% if doc.in_words %}<div class="small">Amount in words: {{ doc.in_words }}</div>{% endif %}
-{% if doc.terms %}<div class="sec">Terms &amp; Conditions</div><div class="small">{{ doc.terms }}</div>{% endif %}
+{% if gs.bank_details %}<div class="sec">Payment Details</div><div class="small" style="white-space:pre-line">{{ gs.bank_details }}</div>{% endif %}
+{% set terms = doc.terms or gs.invoice_terms %}{% if terms %}<div class="sec">Terms &amp; Conditions</div><div class="small">{{ terms }}</div>{% endif %}
+{% if gs.thank_you_note %}<p class="c small">{{ gs.thank_you_note }}</p>{% endif %}
 <table class="sign"><tr><td>Issued by</td><td style="border:0;width:10%"></td><td>Received by (customer signature)</td></tr></table>
 </div>

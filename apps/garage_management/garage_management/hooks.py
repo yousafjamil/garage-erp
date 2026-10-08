@@ -311,7 +311,12 @@ add_to_apps_screen = [
         "logo": "/assets/garage_management/images/logo.png",
         "title": "Garage",
         "route": "/desk/garage-management/garage",
+        "setup_wizard_text": "Let's set up your garage.",
     }
 ]
 
 get_website_user_home_page = "garage_management.api.home.get_home"
+
+extend_bootinfo = ["garage_management.api.whitelabel.extend_bootinfo"]
+override_whitelisted_methods = {"frappe.apps.get_apps": "garage_management.api.whitelabel.get_apps"}
+email_brand_image = "assets/garage_management/images/logo.png"

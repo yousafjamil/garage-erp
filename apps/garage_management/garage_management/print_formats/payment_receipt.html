@@ -12,5 +12,6 @@
 <td class="r">{{ r.get_formatted("total_amount", doc) }}</td><td class="r">{{ r.get_formatted("allocated_amount", doc) }}</td></tr>{% endfor %}
 </tbody></table>{% endif %}
 {% if doc.in_words is defined and doc.in_words %}<div class="small">Amount in words: {{ doc.in_words }}</div>{% endif %}
+{% if gs.receipt_note %}<p class="small">{{ gs.receipt_note }}</p>{% endif %}
 <table class="sign"><tr><td>Received by</td><td style="border:0"></td><td>Customer signature</td></tr></table>
 </div>

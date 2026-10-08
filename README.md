@@ -29,6 +29,7 @@ docs/                     guides (see below)
 - [docs/USER_GUIDE.md](docs/USER_GUIDE.md) — daily garage workflow, roles, adding users
 - [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) — run and develop on a Mac
 - [docs/DEPLOYMENT_HOSTINGER.md](docs/DEPLOYMENT_HOSTINGER.md) — production on a Hostinger VPS, security, backups, updates
+- [docs/PRINT_FORMATS.md](docs/PRINT_FORMATS.md) — documents/letterhead and what the client can edit
 - [docs/ERPNEXT_MAPPING.md](docs/ERPNEXT_MAPPING.md) — what is standard ERPNext vs custom, and why
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 - [apps/garage_management/README.md](apps/garage_management/README.md) — the custom app

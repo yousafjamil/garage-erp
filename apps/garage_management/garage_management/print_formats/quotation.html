@@ -1,7 +1,7 @@
 {% set veh = frappe.db.get_value("Garage Vehicle", doc.vehicle, ["make","model","year","vin","current_mileage"], as_dict=True) if doc.vehicle else None %}
 {% set trn = frappe.db.get_value("Company", doc.company, "tax_id") %}
 <div class="gm">
-<h2 class="t">QUOTATION &nbsp;|&nbsp; عرض سعر</h2>
+<h2 class="t">{{ gs.quotation_title or "QUOTATION" }} &nbsp;|&nbsp; {{ gs.quotation_title_ar or "" }}</h2>
 <table class="box">
 <tr><td class="l">Quotation No</td><td>{{ doc.name }}</td><td class="l">Date</td><td>{{ doc.get_formatted("transaction_date") }}</td></tr>
 <tr><td class="l">Customer</td><td>{{ doc.customer_name }}</td><td class="l">Valid Until</td><td>{{ doc.get_formatted("valid_till") }}</td></tr>
@@ -19,6 +19,7 @@
 {% for t in doc.taxes %}<tr><td>{{ t.description }}</td><td class="r">{{ t.get_formatted("tax_amount", doc) }}</td></tr>{% endfor %}
 <tr class="g"><td>Grand Total</td><td class="r">{{ doc.get_formatted("grand_total") }}</td></tr>
 </table>
-{% if doc.terms %}<div class="sec">Terms &amp; Conditions</div><div class="small">{{ doc.terms }}</div>{% endif %}
+{% set terms = doc.terms or gs.quotation_terms %}{% if terms %}<div class="sec">Terms &amp; Conditions</div><div class="small">{{ terms }}</div>{% endif %}
+{% if gs.thank_you_note %}<p class="c small">{{ gs.thank_you_note }}</p>{% endif %}
 <table class="sign"><tr><td>Prepared by</td><td style="border:0;width:10%"></td><td>Customer approval (name / signature / date)</td></tr></table>
 </div>
