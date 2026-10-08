@@ -34,6 +34,13 @@ Contact (use the "+ New Customer" popup and fill Mobile/Email).
 ## Searching
 Type in the top search bar: customer name or phone, plate, VIN, job/quotation/invoice number, part name or code.
 
+## What each person sees (Simple Mode)
+Everyone signs in to the **Garage** home page with big buttons ("What would you like to do?") and a short left menu:
+Home · New Check-In · Repair Jobs · Inspections · Customers · Vehicles · Quotations · Invoices · Payments · Parts & Services · Reports · Settings.
+The menu only shows what the person is allowed to use (a receptionist has no Invoices/Payments/Settings; a technician lands directly on
+**their own** jobs). Owner and Accountant also have the full accounting, stock and purchasing screens when needed. Nothing is deleted —
+it is only kept out of the way.
+
 ## Roles (Role Profiles)
 | Profile | For | Can do |
 |---|---|---|

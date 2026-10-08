@@ -89,12 +89,12 @@ def _fix_currency():
 
 def _workspace():
     card_names = [c[0] for c in CARDS] + ["Low Stock Parts"]
-    blocks = [{"id": "gh1", "type": "header", "data": {"text": '<span class="h4"><b>Garage Today</b></span>', "col": 12}}]
+    blocks = [{"id": "gh0", "type": "header", "data": {"text": '<span class="h4"><b>What would you like to do?</b></span>', "col": 12}}]
+    blocks += [{"id": f"sc{i}", "type": "shortcut", "data": {"shortcut_name": s[0], "col": 3}} for i, s in enumerate(SHORTCUTS)]
+    blocks += [{"id": "gh1", "type": "header", "data": {"text": '<span class="h4"><b>Garage Today</b></span>', "col": 12}}]
     blocks += [{"id": f"nc{i}", "type": "number_card", "data": {"number_card_name": n, "col": 3}} for i, n in enumerate(card_names)]
     blocks += [{"id": "gh2", "type": "header", "data": {"text": '<span class="h4"><b>Charts</b></span>', "col": 12}}]
     blocks += [{"id": f"ch{i}", "type": "chart", "data": {"chart_name": c["chart_name"], "col": 4 if i == 0 else 8}} for i, c in enumerate(CHARTS[:2])]
-    blocks += [{"id": "gh3", "type": "header", "data": {"text": '<span class="h4"><b>Quick Access</b></span>', "col": 12}}]
-    blocks += [{"id": f"sc{i}", "type": "shortcut", "data": {"shortcut_name": s[0], "col": 3}} for i, s in enumerate(SHORTCUTS)]
     blocks += [{"id": "gh4", "type": "header", "data": {"text": '<span class="h4"><b>Reports</b></span>', "col": 12}}]
     blocks += [{"id": f"rp{i}", "type": "shortcut", "data": {"shortcut_name": r, "col": 3}} for i, r in enumerate(REPORT_LINKS)]
     if frappe.db.exists("Workspace", "Garage"):
@@ -116,23 +116,45 @@ def _workspace():
     ws.insert(ignore_permissions=True)
 
 
+SIDEBAR_NAME = "Garage Management"  # same as the module name, so it replaces the auto-generated menu
+
+
+def _sidebar_items():
+    link = lambda label, icon, ltype, target, child=0: dict(label=label, icon=icon, link_type=ltype, link_to=target, type="Link",
+                                                           collapsible=1, child=child)
+    section = lambda label, icon: dict(label=label, icon=icon, type="Section Break", link_type="DocType", collapsible=1, indent=1)
+    items = [link("Home", "house", "Workspace", "Garage"),
+             link("New Check-In", "log-in", "DocType", "Vehicle Check-In"),
+             link("Repair Jobs", "wrench", "DocType", "Repair Job"),
+             link("Inspections", "clipboard-check", "DocType", "Vehicle Inspection"),
+             link("Customers", "users", "DocType", "Customer"),
+             link("Vehicles", "car", "DocType", "Garage Vehicle"),
+             link("Quotations", "receipt-text", "DocType", "Quotation"),
+             link("Invoices", "receipt", "DocType", "Sales Invoice"),
+             link("Payments", "wallet", "DocType", "Payment Entry"),
+             link("Parts & Services", "package", "DocType", "Item"),
+             section("Reports", "sheet")]
+    items += [link(r, "", "Report", r, child=1) for r in REPORT_LINKS[:6]]
+    items += [link("Settings", "settings", "DocType", "Garage Settings")]
+    return items
+
+
 def _sidebar_and_icon():
-    if not frappe.db.exists("Workspace Sidebar", SIDEBAR):
-        sb = frappe.new_doc("Workspace Sidebar")
-        sb.update({"title": SIDEBAR, "header_icon": "wrench", "module": MODULE, "app": "garage_management"})
-        items = [("Home", "house", "Workspace", "Garage")] + [
-            (lbl, ic, "DocType", dt) for lbl, ic, dt in (
-                ("Check-In", "log-in", "Vehicle Check-In"), ("Inspection", "clipboard-check", "Vehicle Inspection"),
-                ("Repair Jobs", "wrench", "Repair Job"), ("Vehicles", "car", "Garage Vehicle"),
-                ("Customers", "users", "Customer"), ("Quotations", "receipt-text", "Quotation"),
-                ("Invoices", "receipt", "Sales Invoice"), ("Payments", "wallet", "Payment Entry"),
-                ("Parts & Services", "package", "Item"), ("Settings", "settings", "Garage Settings"))]
-        items += [(r, "", "Report", r) for r in REPORT_LINKS[:6]]
-        for label, icon, ltype, target in items:
-            sb.append("items", {"label": label, "icon": icon, "link_type": ltype, "link_to": target, "type": "Link",
-                                "collapsible": 1})
+    """The left-hand menu. v16 reads the `Sidebar` doctype; a sidebar named like the module replaces the automatic one."""
+    items = _sidebar_items()
+    for legacy in ("Garage", SIDEBAR_NAME):  # earlier attempts used the older 'Workspace Sidebar' doctype
+        if frappe.db.exists("Workspace Sidebar", legacy):
+            frappe.delete_doc("Workspace Sidebar", legacy, force=True, ignore_permissions=True)
+    existing = frappe.db.exists("Sidebar", SIDEBAR_NAME)
+    if existing and len(frappe.get_doc("Sidebar", SIDEBAR_NAME).items) != len(items):
+        frappe.delete_doc("Sidebar", SIDEBAR_NAME, force=True, ignore_permissions=True)
+        existing = False
+    if not existing:
+        sb = frappe.new_doc("Sidebar")
+        sb.update({"title": SIDEBAR_NAME, "header_icon": "wrench", "module": MODULE, "app": "garage_management", "standard": 0})
+        for row in items:
+            row = {k: v for k, v in row.items() if k != "link_type" or v != "Workspace Sidebar"}
+            sb.append("items", row)
         sb.insert(ignore_permissions=True)
-    if not frappe.db.exists("Desktop Icon", "Garage"):
-        frappe.get_doc({"doctype": "Desktop Icon", "label": "Garage", "icon_type": "Link", "link_type": "Workspace Sidebar",
-                        "link_to": SIDEBAR, "icon": "wrench", "app": "garage_management", "idx": 1,
-                        "standard": 0, "bg_color": "blue"}).insert(ignore_permissions=True)
+    if frappe.db.exists("Desktop Icon", "Garage"):
+        frappe.delete_doc("Desktop Icon", "Garage", force=True, ignore_permissions=True)  # the launcher tile comes from the app itself
