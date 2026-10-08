@@ -31,6 +31,7 @@ def setup_all():
     seed_catalog()
     create_role_profiles()
     configure_search()
+    simplify_for_small_garage()
     from garage_management.setup import custom_fields, dashboard, notifications, print_formats, workflow
     custom_fields.create()
     workflow.create()
@@ -143,6 +144,19 @@ def configure_search():
     from frappe.custom.doctype.property_setter.property_setter import make_property_setter
     # find customers by phone number in link fields and list search
     make_property_setter("Customer", None, "search_fields", "customer_name,customer_group,territory,mobile_no", "Data", for_doctype=True)
+
+
+# ERPNext areas a small garage does not need: hidden from the menus (nothing is uninstalled).
+HIDE_WORKSPACES = ["Manufacturing", "Projects", "Assets", "Quality", "Support", "CRM", "Website", "Subcontracting",
+                   "Payroll", "HR", "Home"]
+
+
+def simplify_for_small_garage():
+    for name in HIDE_WORKSPACES:
+        if frappe.db.exists("Workspace", name):
+            frappe.db.set_value("Workspace", name, "is_hidden", 1)
+        if frappe.db.exists("Desktop Icon", name):
+            frappe.db.set_value("Desktop Icon", name, "hidden", 1)
 
 
 def create_role_profiles():
