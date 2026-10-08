@@ -32,6 +32,8 @@ def setup_all():
     create_role_profiles()
     configure_search()
     simplify_for_small_garage()
+    from garage_management.setup import branding
+    branding.apply()
     from garage_management.setup import custom_fields, dashboard, notifications, print_formats, workflow
     custom_fields.create()
     workflow.create()

@@ -6,10 +6,8 @@ NAME = "Candle Auto Repair Workshop"
 EMAIL = "Candlearw@gmail.com"
 PHONES = ["056-900 3156", "050-495 6602", "050-806 2151"]
 ADDRESS = {"line1": "Musaffah M32-02", "city": "Abu Dhabi", "country": "United Arab Emirates"}
-HEADER = ('<div style="text-align:center"><div style="font-size:20px;font-weight:bold">Candle Auto Repair Workshop</div>'
-          '<div style="font-size:18px;direction:rtl">ورشة كاندل لاصلاح السيارات</div></div>')
-FOOTER = ('<div style="text-align:center;font-size:11px">Candlearw@gmail.com<br>056-900 3156 &nbsp; 050-495 6602 &nbsp; '
-          '050-806 2151<br>Musaffah M32-02 Abu Dhabi UAE</div>')
+HEADER = '<img src="/assets/garage_management/images/letterhead-header.jpg" style="width:100%;display:block">'
+FOOTER = '<img src="/assets/garage_management/images/letterhead-footer.jpg" style="width:100%;display:block">'
 
 
 def apply():

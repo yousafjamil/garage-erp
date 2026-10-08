@@ -308,7 +308,7 @@ scheduler_events = {
 add_to_apps_screen = [
     {
         "name": "garage_management",
-        "logo": "/assets/garage_management/images/garage-logo.svg",
+        "logo": "/assets/garage_management/images/logo.png",
         "title": "Garage",
         "route": "/desk/garage-management/garage",
     }
