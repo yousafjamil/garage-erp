@@ -303,3 +303,15 @@ app_include_js = ["/assets/garage_management/js/garage_vehicle_filter.js"]
 scheduler_events = {
     "daily": ["garage_management.api.dashboard.low_stock_alert"],
 }
+
+# Appears on the app launcher; also the system default app so users land straight on the Garage page.
+add_to_apps_screen = [
+    {
+        "name": "garage_management",
+        "logo": "/assets/garage_management/images/garage-logo.svg",
+        "title": "Garage",
+        "route": "/desk/garage-management/garage",
+    }
+]
+
+get_website_user_home_page = "garage_management.api.home.get_home"

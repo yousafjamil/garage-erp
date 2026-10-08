@@ -49,7 +49,7 @@ SHORTCUTS = [  # label, doctype/report, type, view
     ("Items (Parts & Services)", "Item", "DocType", "List"),
 ]
 
-REPORT_LINKS = ["Vehicle Service History", "Jobs by Status", "Technician Performance", "Parts Used",
+REPORT_LINKS = ["Customer 360", "Vehicle Service History", "Jobs by Status", "Technician Performance", "Parts Used",
                 "Services Performed", "Low Stock Parts", "Sales Register", "Accounts Receivable", "Stock Balance",
                 "Quotation Trends", "Profit and Loss Statement", "General Ledger"]
 
@@ -87,8 +87,6 @@ def _fix_currency():
 
 
 def _workspace():
-    if frappe.db.exists("Workspace", "Garage"):
-        return
     card_names = [c[0] for c in CARDS] + ["Low Stock Parts"]
     blocks = [{"id": "gh1", "type": "header", "data": {"text": '<span class="h4"><b>Garage Today</b></span>', "col": 12}}]
     blocks += [{"id": f"nc{i}", "type": "number_card", "data": {"number_card_name": n, "col": 3}} for i, n in enumerate(card_names)]
@@ -98,6 +96,10 @@ def _workspace():
     blocks += [{"id": f"sc{i}", "type": "shortcut", "data": {"shortcut_name": s[0], "col": 3}} for i, s in enumerate(SHORTCUTS)]
     blocks += [{"id": "gh4", "type": "header", "data": {"text": '<span class="h4"><b>Reports</b></span>', "col": 12}}]
     blocks += [{"id": f"rp{i}", "type": "shortcut", "data": {"shortcut_name": r, "col": 3}} for i, r in enumerate(REPORT_LINKS)]
+    if frappe.db.exists("Workspace", "Garage"):
+        if frappe.db.get_value("Workspace", "Garage", "content") == json.dumps(blocks):
+            return
+        frappe.delete_doc("Workspace", "Garage", force=True, ignore_permissions=True)  # system-managed page: rebuild
     ws = frappe.new_doc("Workspace")
     ws.update({"label": "Garage", "title": "Garage", "name": "Garage", "module": MODULE, "public": 1, "icon": "wrench",
                "content": json.dumps(blocks), "sequence_id": 1})

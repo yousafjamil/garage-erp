@@ -1,6 +1,6 @@
 # User guide — daily garage workflow
 
-Sign in at your ERP address. The **Garage** workspace is the home page: today's jobs, cars in the garage, jobs waiting
+Sign in at your ERP address; you land directly on the **Garage** page (no app launcher). It shows: today's jobs, cars in the garage, jobs waiting
 for approval / in repair / ready, today's invoices, outstanding payments, monthly revenue, low-stock parts.
 
 ## The 10 steps
@@ -17,6 +17,11 @@ for approval / in repair / ready, today's invoices, outstanding payments, monthl
 
 **Service history:** open any vehicle → **Service History** button (or Reports → Vehicle Service History): every job with
 date, mileage, complaint, diagnosis, services, parts, technician, invoice, paid/outstanding.
+
+## Customer 360
+*Reports → Customer 360* → pick a customer (type name or phone): contact details, all their vehicles, every repair job,
+**total spent** and **still owes**, last visit. Phone search works when the phone is saved on the customer's primary
+Contact (use the "+ New Customer" popup and fill Mobile/Email).
 
 ## Searching
 Type in the top search bar: customer name or phone, plate, VIN, job/quotation/invoice number, part name or code.

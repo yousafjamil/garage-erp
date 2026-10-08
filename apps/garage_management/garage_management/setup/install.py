@@ -152,6 +152,8 @@ HIDE_WORKSPACES = ["Manufacturing", "Projects", "Assets", "Quality", "Support", 
 
 
 def simplify_for_small_garage():
+    # log in straight to the Garage page instead of the app launcher
+    frappe.db.set_single_value("System Settings", "default_app", "garage_management")
     for name in HIDE_WORKSPACES:
         if frappe.db.exists("Workspace", name):
             frappe.db.set_value("Workspace", name, "is_hidden", 1)
