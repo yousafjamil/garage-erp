@@ -69,8 +69,21 @@ def create():
     for ch in CHARTS:
         if not frappe.db.exists("Dashboard Chart", ch["chart_name"]):
             frappe.get_doc(dict(ch, doctype="Dashboard Chart", is_public=1, module=MODULE)).insert(ignore_permissions=True)
+    _fix_currency()
     _workspace()
     _sidebar_and_icon()
+
+
+def _fix_currency():
+    """Cards/charts created before the Setup Wizard pick up the pre-wizard default currency; use the company's."""
+    company = frappe.defaults.get_global_default("company")
+    cur = frappe.db.get_value("Company", company, "default_currency") if company else None
+    if not cur:
+        return
+    for label, dt, fn, *_ in CARDS:
+        frappe.db.set_value("Number Card", label, "currency", cur if fn == "Sum" else None)
+    for ch in CHARTS:
+        frappe.db.set_value("Dashboard Chart", ch["chart_name"], "currency", cur if ch["chart_type"] == "Sum" else None)
 
 
 def _workspace():
