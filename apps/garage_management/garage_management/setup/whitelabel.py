@@ -5,6 +5,8 @@ HIDE_WORKSPACES = ["ERPNext Settings", "Build", "Integrations"]
 
 
 def apply():
+    if not frappe.is_setup_complete():
+        return  # System Settings needs language/time zone from the Setup Wizard; the next migrate applies this
     # no update / change-log notices, no vendor footer in emails, no vendor links in the Help menu
     ss = frappe.get_single("System Settings")  # saved as a document so the system defaults refresh too
     for field in ("disable_system_update_notification", "disable_change_log_notification", "disable_standard_email_footer"):

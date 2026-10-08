@@ -145,7 +145,7 @@ def configure_search():
     gs.save(ignore_permissions=True)
     from frappe.custom.doctype.property_setter.property_setter import make_property_setter
     # find customers by phone number in link fields and list search
-    make_property_setter("Customer", None, "search_fields", "customer_name,customer_group,territory,mobile_no", "Data", for_doctype=True)
+    make_property_setter("Customer", None, "search_fields", "customer_name,customer_group,territory,mobile_no", "Data", for_doctype=True, validate_fields_for_doctype=False)
 
 
 # ERPNext areas a small garage does not need: hidden from the menus (nothing is uninstalled).
@@ -167,6 +167,9 @@ def create_role_profiles():
     for name, roles in ROLE_PROFILES.items():
         doc = frappe.get_doc("Role Profile", name) if frappe.db.exists("Role Profile", name) else frappe.new_doc("Role Profile")
         doc.role_profile = name
+        doc.name = name
+        if doc.is_locked:  # a failed earlier run can leave the "queued" lock file behind
+            doc.unlock()
         have = {r.role for r in doc.get("roles", [])}
         for r in roles:
             if r not in have and frappe.db.exists("Role", r):

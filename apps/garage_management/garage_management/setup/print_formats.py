@@ -28,4 +28,4 @@ def create():
         doc.update({"doc_type": doctype, "print_format_type": "Jinja", "custom_format": 1, "html": html,
                     "standard": "No", "disabled": 0, "margin_top": 10, "margin_bottom": 34, "margin_left": 0, "margin_right": 0, "module": "Garage Management", "default_print_language": "en"})
         doc.save(ignore_permissions=True)
-        make_property_setter(doctype, None, "default_print_format", name, "Data", for_doctype=True)
+        make_property_setter(doctype, None, "default_print_format", name, "Data", for_doctype=True, validate_fields_for_doctype=False)

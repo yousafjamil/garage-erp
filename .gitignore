@@ -6,3 +6,6 @@ frappe_docker/.env
 
 deploy/.env.prod
 deploy/.env.rehearsal
+deploy/.env.pg
+__pycache__/
+*.pyc
