@@ -1,6 +1,6 @@
 import frappe
 from frappe.model.document import Document
-from frappe.utils import flt, nowdate
+from frappe.utils import add_days, cint, flt, nowdate
 
 # Work cannot start (or finish) before the customer has approved the quotation.
 APPROVAL_GATED = ("In Repair", "Quality Check", "Ready for Delivery", "Completed")
@@ -84,6 +84,11 @@ class RepairJob(Document):
             updates["status"] = VEHICLE_STATUS[self.status]
         else:
             updates["status"] = "Under Repair"
+        if self.status == "Completed":
+            days = cint(frappe.db.get_single_value("Garage Settings", "service_interval_days")) or 180
+            km = cint(frappe.db.get_single_value("Garage Settings", "service_interval_km")) or 5000
+            updates["next_service_date"] = add_days(self.actual_completion or nowdate(), days)
+            updates["next_service_mileage"] = cint(self.mileage or updates.get("current_mileage") or 0) + km
         if updates:
             frappe.db.set_value("Garage Vehicle", self.vehicle, updates)
         if self.check_in and not frappe.db.get_value("Vehicle Check-In", self.check_in, "repair_job"):

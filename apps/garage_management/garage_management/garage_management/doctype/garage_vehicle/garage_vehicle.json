@@ -21,6 +21,10 @@
   "fuel_type",
   "transmission",
   "current_mileage",
+  "sb_next",
+  "next_service_date",
+  "cb_next",
+  "next_service_mileage",
   "sb_ins",
   "insurance_company",
   "insurance_policy_no",
@@ -146,6 +150,27 @@
    "fieldtype": "Int",
    "label": "Current Mileage (km)",
    "in_list_view": 1
+  },
+  {
+   "fieldname": "sb_next",
+   "fieldtype": "Section Break",
+   "label": "Next Service"
+  },
+  {
+   "fieldname": "next_service_date",
+   "fieldtype": "Date",
+   "label": "Next Service Date",
+   "in_list_view": 0,
+   "description": "Set automatically when a job is completed; you can change it."
+  },
+  {
+   "fieldname": "cb_next",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "next_service_mileage",
+   "fieldtype": "Int",
+   "label": "Next Service Mileage (km)"
   },
   {
    "fieldname": "sb_ins",

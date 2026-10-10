@@ -48,9 +48,20 @@ def sync_branding(gs):
     frappe.clear_cache()
 
 
+NEW_DEFAULTS = {  # settings added after the first release: fill them once if they are empty
+    "whatsapp_ready_message": "Hello {customer}, your {vehicle} ({plate}) is ready for collection. {garage}",
+    "whatsapp_quote_message": "Hello {customer}, your quotation {name} for {total} for {vehicle} ({plate}) is ready. Please confirm to start the work. {garage}",
+    "service_interval_days": 180, "service_interval_km": 5000, "reminder_days_before": 7,
+}
+
+
 def ensure_defaults():
-    """First run only: fill the contact/letterhead fields from the garage's details."""
+    """First run: fill the contact/letterhead fields. Every run: fill newer settings that are still empty."""
     gs = frappe.get_single("Garage Settings")
+    missing = {k: v for k, v in NEW_DEFAULTS.items() if not gs.get(k)}
+    if missing:
+        gs.update(missing)
+        gs.save(ignore_permissions=True)
     if gs.initialized:
         return
     gs.update({"header_image": DEFAULT_HEADER, "footer_image": DEFAULT_FOOTER, "logo": DEFAULT_LOGO,

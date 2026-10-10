@@ -301,7 +301,7 @@ doctype_js = {
 app_include_js = ["/assets/garage_management/js/garage_vehicle_filter.js", "/assets/garage_management/js/garage_actions.js", "/assets/garage_management/js/simple_forms.js"]
 
 scheduler_events = {
-    "daily": ["garage_management.api.dashboard.low_stock_alert"],
+    "daily": ["garage_management.api.dashboard.low_stock_alert", "garage_management.api.reminders.daily_vehicle_reminders"],
     # new customers / vehicles / jobs become searchable within a minute (ERPNext's default is 15 minutes)
     "cron": {"* * * * *": ["frappe.utils.global_search.sync_global_search"]},
 }

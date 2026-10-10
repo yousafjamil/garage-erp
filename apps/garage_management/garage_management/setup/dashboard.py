@@ -50,7 +50,7 @@ SHORTCUTS = [  # label, doctype/report, type, view
     ("Garage Settings", "Garage Settings", "DocType", ""),
 ]
 
-REPORT_LINKS = ["Customer 360", "Vehicle Service History", "Jobs by Status", "Technician Performance", "Parts Used",
+REPORT_LINKS = ["Vehicle Reminders", "Customer 360", "Vehicle Service History", "Jobs by Status", "Technician Performance", "Parts Used",
                 "Services Performed", "Low Stock Parts", "Sales Register", "Accounts Receivable", "Stock Balance",
                 "Quotation Trends", "Profit and Loss Statement", "General Ledger"]
 
@@ -134,7 +134,7 @@ def _sidebar_items():
              link("Payments", "wallet", "DocType", "Payment Entry"),
              link("Parts & Services", "package", "DocType", "Item"),
              section("Reports", "sheet")]
-    items += [link(r, "", "Report", r, child=1) for r in REPORT_LINKS[:6]]
+    items += [link(r, "", "Report", r, child=1) for r in REPORT_LINKS[:7]]
     items += [link("Settings", "settings", "DocType", "Garage Settings")]
     return items
 

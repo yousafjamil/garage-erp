@@ -76,3 +76,15 @@ window.garage_customer_decision = function (quotation, after) {
 	});
 	d.show();
 };
+
+// WhatsApp click-to-chat: opens WhatsApp with the customer's number and a ready-typed message (templates live in Garage Settings).
+[["Repair Job", "ready"], ["Quotation", "quotation"]].forEach(([doctype, kind]) => {
+	frappe.ui.form.on(doctype, {
+		refresh(frm) {
+			if (frm.is_new() || frm.doc.docstatus === 2) return;
+			frm.add_custom_button(__("WhatsApp"), () =>
+				frappe.call({ method: "garage_management.api.messages.whatsapp_link", args: { doctype, name: frm.doc.name, kind } })
+					.then((r) => window.open(r.message, "_blank"))).addClass("btn-success");
+		},
+	});
+});

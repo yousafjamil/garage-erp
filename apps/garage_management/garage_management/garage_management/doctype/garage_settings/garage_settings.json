@@ -36,6 +36,13 @@
   "checkin_disclaimer",
   "receipt_note",
   "thank_you_note",
+  "sb_msg",
+  "whatsapp_ready_message",
+  "whatsapp_quote_message",
+  "cb_msg",
+  "service_interval_days",
+  "service_interval_km",
+  "reminder_days_before",
   "initialized"
  ],
  "fields": [
@@ -221,6 +228,48 @@
    "label": "Thank-You Line",
    "description": "Printed at the bottom of quotations and invoices.",
    "default": "Thank you for choosing us."
+  },
+  {
+   "fieldname": "sb_msg",
+   "fieldtype": "Section Break",
+   "label": "Messages & Reminders"
+  },
+  {
+   "fieldname": "whatsapp_ready_message",
+   "fieldtype": "Small Text",
+   "label": "WhatsApp: car is ready",
+   "default": "Hello {customer}, your {vehicle} ({plate}) is ready for collection. {garage}",
+   "description": "Placeholders: {customer} {vehicle} {plate} {garage} {total}"
+  },
+  {
+   "fieldname": "whatsapp_quote_message",
+   "fieldtype": "Small Text",
+   "label": "WhatsApp: quotation",
+   "default": "Hello {customer}, your quotation {name} for {total} for {vehicle} ({plate}) is ready. Please confirm to start the work. {garage}",
+   "description": "Placeholders: {customer} {vehicle} {plate} {garage} {total} {name}"
+  },
+  {
+   "fieldname": "cb_msg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "service_interval_days",
+   "fieldtype": "Int",
+   "label": "Next service after (days)",
+   "default": "180"
+  },
+  {
+   "fieldname": "service_interval_km",
+   "fieldtype": "Int",
+   "label": "Next service after (km)",
+   "default": "5000"
+  },
+  {
+   "fieldname": "reminder_days_before",
+   "fieldtype": "Int",
+   "label": "Remind this many days before",
+   "default": "7",
+   "description": "Service, registration and insurance reminders."
   },
   {
    "fieldname": "initialized",

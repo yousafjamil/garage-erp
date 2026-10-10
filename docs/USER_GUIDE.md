@@ -50,6 +50,15 @@ Next: Send to Quality Check → Next: Quality Passed → Create Invoice → Subm
 - **Receive Payment**: amount (full balance by default; type less for a part-payment), Cash / Card / Bank Transfer / Other, optional reference; then offers the receipt.
 - Front-desk staff (receptionist) cannot invoice or take payment: they see "Waiting for the manager or accountant…" and can press **Next: Deliver Vehicle** once it is paid.
 
+## WhatsApp and reminders
+- **WhatsApp button** (green) on a repair job and on a submitted quotation: opens WhatsApp with the customer's number and the message already typed
+  (e.g. "Hello Ahmed, your Toyota Corolla (ABC-123) is ready for collection."). Press send. The wording is in **Garage Settings → Messages & Reminders**.
+  The customer needs a mobile number saved (UAE numbers like 050… are converted automatically).
+- **Next service:** when a job is completed the car's *Next Service Date* and *Next Service Mileage* are filled in automatically
+  (after 180 days / 5,000 km by default - change in Garage Settings). You can also edit them on the vehicle.
+- **Vehicle Reminders** report (Reports menu): cars whose service, registration or insurance is due soon, with the owner's phone.
+  Every morning the receptionist, managers and owner also get a notification when something is due.
+
 ## Simple screens
 Quotation, Invoice, Customer, Item and Payment forms show only what a garage uses (the accounting, shipping, price-list, sales-team and tax-withholding
 sections are hidden). Every document has big **Print**, **Download PDF** and **Email** buttons at the top, and a repair job shows a blue line saying
