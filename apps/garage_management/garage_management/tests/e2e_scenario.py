@@ -108,10 +108,15 @@ def run():
         apply_workflow(job, "Deliver Vehicle"); check("delivery blocked while unpaid", False)
     except frappe.ValidationError:
         check("delivery blocked while unpaid", True); job.reload()
-    # 16 payment
-    from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
-    pe = get_payment_entry("Sales Invoice", sn); pe.mode_of_payment = "Cash"; pe.reference_no = "E2E"; pe.reference_date = nowdate()
-    pe.insert(); pe.submit(); si.reload()
+    # 16 payment: one-step API, partial then full
+    from garage_management.api import payments
+    r1 = payments.receive_payment(sn, 300, "Card", "SLIP-1")
+    check("partial payment leaves balance", flt(r1["outstanding"]) == 487.5, str(r1))
+    try:
+        payments.receive_payment(sn, 9999, "Cash"); check("overpayment refused", False)
+    except frappe.ValidationError:
+        check("overpayment refused", True)
+    r2 = payments.receive_payment(sn, 487.5, "Cash"); si.reload()
     check("invoice paid / outstanding 0", si.status == "Paid" and flt(si.outstanding_amount) == 0, si.status)
 
     # 17-18 deliver

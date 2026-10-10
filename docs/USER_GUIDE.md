@@ -41,6 +41,13 @@ The menu only shows what the person is allowed to use (a receptionist has no Inv
 **their own** jobs). Owner and Accountant also have the full accounting, stock and purchasing screens when needed. Nothing is deleted —
 it is only kept out of the way.
 
+## The big button
+On every repair job the big dark button at the top right always shows the next thing to do: *Next: Start Inspection → Create Quotation →
+Open Quotation (submit it, then Customer Decision) → Next: Start Repair → Next: Send to Quality Check → Next: Quality Passed →
+Create Invoice → Open Invoice (submit it) → Receive Payment → Next: Deliver Vehicle*. The blue line above it explains the step in plain words.
+**Receive Payment** opens a tiny box: amount (full balance by default; type less for a partial payment), Cash / Card / Bank Transfer / Other,
+optional reference — then offers to print the receipt.
+
 ## Simple screens
 Quotation, Invoice, Customer, Item and Payment forms show only what a garage uses (the accounting, shipping, price-list, sales-team and tax-withholding
 sections are hidden). Every document has big **Print**, **Download PDF** and **Email** buttons at the top, and a repair job shows a blue line saying

@@ -65,7 +65,7 @@ const GARAGE_HINTS = {
 	"Approved": "The customer approved. Press Next to start the repair.",
 	"In Repair": "Repair the car. When done press Next to send it to quality check.",
 	"Quality Check": "Check the work. If it is good press Next (manager).",
-	"Ready for Delivery": "Create > Invoice, submit it and record the payment. Then press Next to deliver the car.",
+	"Ready for Delivery": "Press the big button: create the invoice, submit it, receive the payment, then deliver the car.",
 	"Completed": "Delivered. The job is finished.",
 	"Cancelled": "This job was cancelled.",
 };
@@ -75,10 +75,38 @@ function garage_next_step(frm) {
 	const hint = GARAGE_HINTS[frm.doc.status];
 	if (hint) frm.dashboard.set_headline(`<b>${__(frm.doc.status)}</b> &mdash; ${__(hint)}`);
 	if (frm.is_dirty()) return;
-	if (frm.doc.status === "Waiting for Customer Approval" && frm.doc.quotation) {
-		frm.page.set_primary_action(__("Open Quotation"), () => frappe.set_route("Form", "Quotation", frm.doc.quotation));
-		return;
+	const api = "garage_management.api.repair_job.";
+	const go = (doctype, name) => frappe.set_route("Form", doctype, name);
+	const big = (label, fn) => frm.page.set_primary_action(__(label), fn);
+	const st = frm.doc.status;
+
+	// quotation steps
+	if (["Inspection", "Waiting for Quotation"].includes(st) && !frm.doc.quotation && (frm.doc.services || []).length + (frm.doc.parts || []).length) {
+		return big("Create Quotation", () => frappe.call({ method: api + "make_quotation", args: { job: frm.doc.name }, freeze: true })
+			.then((r) => go("Quotation", r.message)));
 	}
+	if (frm.doc.quotation && ["Waiting for Quotation", "Waiting for Customer Approval"].includes(st)) {
+		return big("Open Quotation", () => go("Quotation", frm.doc.quotation));
+	}
+	// money steps
+	if (st === "Ready for Delivery") {
+		if (!frm.doc.sales_invoice) {
+			return big("Create Invoice", () => frappe.call({ method: api + "make_invoice", args: { job: frm.doc.name }, freeze: true })
+				.then((r) => go("Sales Invoice", r.message)));
+		}
+		return frappe.db.get_value("Sales Invoice", frm.doc.sales_invoice, ["docstatus", "outstanding_amount"]).then((r) => {
+			const inv = r.message;
+			if (inv.docstatus === 0) return big("Open Invoice (submit it)", () => go("Sales Invoice", frm.doc.sales_invoice));
+			if (inv.outstanding_amount > 0) {
+				return big("Receive Payment", () => window.garage_receive_payment(frm.doc.sales_invoice, inv.outstanding_amount, () => frm.reload_doc()));
+			}
+			garage_workflow_next(frm);
+		});
+	}
+	garage_workflow_next(frm);
+}
+
+function garage_workflow_next(frm) {
 	frappe.xcall("frappe.model.workflow.get_transitions", { doc: frm.doc }).then((ts) => {
 		const t = (ts || []).find((x) => !GARAGE_SKIP.includes(x.action));
 		if (!t) return;
