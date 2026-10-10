@@ -1,0 +1,20 @@
+# Render Blueprint: ONE web service that runs the whole garage ERP (database, Redis, workers, web) with a persistent disk.
+# Needs a PAID instance: the free plan has ~512 MB RAM and no disk. "standard" = 2 GB RAM. Check current prices on render.com/pricing.
+services:
+  - type: web
+    name: garage-erp
+    runtime: docker
+    plan: standard
+    dockerfilePath: ./render/Dockerfile
+    dockerContext: .
+    autoDeploy: false
+    healthCheckPath: /healthz
+    disk:
+      name: garage-data
+      mountPath: /data
+      sizeGB: 10
+    envVars:
+      - key: SITE_NAME
+        value: garage.local
+      - key: ADMIN_PASSWORD
+        sync: false   # you type this once in the Render dashboard; it becomes the Administrator password
