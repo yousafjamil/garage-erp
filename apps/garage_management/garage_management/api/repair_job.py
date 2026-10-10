@@ -87,3 +87,31 @@ def make_invoice(job):
     si.insert()
     job.db_set({"sales_order": so.name, "sales_invoice": si.name})
     return si.name
+
+
+@frappe.whitelist()
+def submit_quotation(job):
+    """Send the job's quotation (submit it) and move the job to 'Waiting for Customer Approval'."""
+    from frappe.model.workflow import apply_workflow
+
+    job = _job(job)
+    q = frappe.get_doc("Quotation", job.quotation)
+    q.check_permission("submit")
+    if q.docstatus == 0:
+        q.submit()
+    if job.status == "Waiting for Quotation":
+        try:
+            apply_workflow(job, "Send for Approval")
+        except Exception:
+            frappe.clear_last_message()  # a role that may not make this transition: the job just stays where it is
+    return q.name
+
+
+@frappe.whitelist()
+def submit_invoice(job):
+    job = _job(job)
+    si = frappe.get_doc("Sales Invoice", job.sales_invoice)
+    si.check_permission("submit")
+    if si.docstatus == 0:
+        si.submit()
+    return si.name

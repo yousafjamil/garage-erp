@@ -42,11 +42,13 @@ The menu only shows what the person is allowed to use (a receptionist has no Inv
 it is only kept out of the way.
 
 ## The big button
-On every repair job the big dark button at the top right always shows the next thing to do: *Next: Start Inspection → Create Quotation →
-Open Quotation (submit it, then Customer Decision) → Next: Start Repair → Next: Send to Quality Check → Next: Quality Passed →
-Create Invoice → Open Invoice (submit it) → Receive Payment → Next: Deliver Vehicle*. The blue line above it explains the step in plain words.
-**Receive Payment** opens a tiny box: amount (full balance by default; type less for a partial payment), Cash / Card / Bank Transfer / Other,
-optional reference — then offers to print the receipt.
+On every repair job the big dark button at the top right always shows the next thing to do, and the blue line above it explains the step in plain words:
+*Next: Start Inspection → Create Quotation → (Review Quotation) → Submit Quotation → Customer Decision → Next: Start Repair →
+Next: Send to Quality Check → Next: Quality Passed → Create Invoice → Submit Invoice → Receive Payment → Next: Deliver Vehicle.*
+- **Submit Quotation** asks you to confirm the total, then offers to print it (use **Email** on the quotation to send it).
+- **Customer Decision**: Approved / Rejected, who decided, optional comments.
+- **Receive Payment**: amount (full balance by default; type less for a part-payment), Cash / Card / Bank Transfer / Other, optional reference; then offers the receipt.
+- Front-desk staff (receptionist) cannot invoice or take payment: they see "Waiting for the manager or accountant…" and can press **Next: Deliver Vehicle** once it is paid.
 
 ## Simple screens
 Quotation, Invoice, Customer, Item and Payment forms show only what a garage uses (the accounting, shipping, price-list, sales-team and tax-withholding

@@ -57,3 +57,22 @@ frappe.ui.form.on("Sales Invoice", {
 		btn.removeClass("btn-default").addClass("btn-success");
 	},
 });
+
+// Customer approves / rejects the quotation (used by the repair job's big button).
+window.garage_customer_decision = function (quotation, after) {
+	const d = new frappe.ui.Dialog({
+		title: __("Customer Decision"),
+		fields: [
+			{ fieldname: "decision", fieldtype: "Select", label: __("The customer"), options: "Customer Approved\nCustomer Rejected", default: "Customer Approved", reqd: 1 },
+			{ fieldname: "approved_by", fieldtype: "Data", label: __("Name of the person who decided"), reqd: 1 },
+			{ fieldname: "comments", fieldtype: "Small Text", label: __("Comments (optional)") },
+		],
+		primary_action_label: __("Save"),
+		primary_action(v) {
+			frappe.call({ method: "garage_management.api.repair_job.record_approval", freeze: true,
+				args: { quotation, decision: v.decision, approved_by: v.approved_by, comments: v.comments } })
+				.then(() => { d.hide(); after && after(); });
+		},
+	});
+	d.show();
+};

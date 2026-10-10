@@ -60,8 +60,8 @@ const GARAGE_HINTS = {
 	"Draft": "Press Next to check the car in.",
 	"Checked In": "Add the inspection, then press Next to start it.",
 	"Inspection": "Inspect the car (Create > Inspection), then press Next.",
-	"Waiting for Quotation": "Add services and parts below, then Create > Quotation, send it, and press Next.",
-	"Waiting for Customer Approval": "Open the quotation and press Customer Decision > Customer Approved (or Rejected).",
+	"Waiting for Quotation": "Add the services and parts below, then use the big button to create, review and send the quotation.",
+	"Waiting for Customer Approval": "Ask the customer, then press Customer Decision.",
 	"Approved": "The customer approved. Press Next to start the repair.",
 	"In Repair": "Repair the car. When done press Next to send it to quality check.",
 	"Quality Check": "Check the work. If it is good press Next (manager).",
@@ -69,6 +69,7 @@ const GARAGE_HINTS = {
 	"Completed": "Delivered. The job is finished.",
 	"Cancelled": "This job was cancelled.",
 };
+const garage_headline = (frm, text) => { frm.dashboard.clear_headline(); frm.dashboard.set_headline(`<b>${__(frm.doc.status)}</b> &mdash; ${__(text)}`); };
 const GARAGE_SKIP = ["Cancel Job", "Needs Rework", "Revise Quotation", "Customer Approved"];
 
 function garage_next_step(frm) {
@@ -86,17 +87,45 @@ function garage_next_step(frm) {
 			.then((r) => go("Quotation", r.message)));
 	}
 	if (frm.doc.quotation && ["Waiting for Quotation", "Waiting for Customer Approval"].includes(st)) {
-		return big("Open Quotation", () => go("Quotation", frm.doc.quotation));
+		return frappe.db.get_value("Quotation", frm.doc.quotation, ["docstatus", "approval_status", "grand_total"]).then((r) => {
+			const q = r.message;
+			if (q.docstatus === 0) {
+				frm.page.set_secondary_action(__("Review Quotation"), () => go("Quotation", frm.doc.quotation));
+				return big("Submit Quotation", () => frappe.confirm(
+					__("Send this quotation (total {0}) to the customer? Prices cannot be changed afterwards.", [format_currency(q.grand_total)]),
+					() => frappe.call({ method: api + "submit_quotation", args: { job: frm.doc.name }, freeze: true }).then(() => {
+						frm.reload_doc();
+						frappe.confirm(__("Quotation submitted. Print it now?"), () =>
+							window.open(`/printview?doctype=Quotation&name=${encodeURIComponent(frm.doc.quotation)}&format=Garage%20Quotation&no_letterhead=0`, "_blank"));
+					})));
+			}
+			if (q.approval_status === "Pending") {
+				return big("Customer Decision", () => window.garage_customer_decision(frm.doc.quotation, () => frm.reload_doc()));
+			}
+		});
 	}
 	// money steps
 	if (st === "Ready for Delivery") {
+		const can_bill = frappe.model.can_create("Sales Invoice") && frappe.model.can_create("Payment Entry");
+		if (!can_bill) {
+			// front-desk staff cannot invoice: wait for the manager/accountant, then they can deliver
+			if (!frm.doc.sales_invoice) { garage_headline(frm, "Waiting for the manager or accountant to invoice and take payment. Then press Next to deliver."); return; }
+			return frappe.db.get_value("Sales Invoice", frm.doc.sales_invoice, ["docstatus", "outstanding_amount"]).then((r) => {
+				if (r.message.docstatus === 1 && !(r.message.outstanding_amount > 0)) return garage_workflow_next(frm);
+				garage_headline(frm, "Waiting for the invoice to be paid.");
+			});
+		}
 		if (!frm.doc.sales_invoice) {
 			return big("Create Invoice", () => frappe.call({ method: api + "make_invoice", args: { job: frm.doc.name }, freeze: true })
 				.then((r) => go("Sales Invoice", r.message)));
 		}
 		return frappe.db.get_value("Sales Invoice", frm.doc.sales_invoice, ["docstatus", "outstanding_amount"]).then((r) => {
 			const inv = r.message;
-			if (inv.docstatus === 0) return big("Open Invoice (submit it)", () => go("Sales Invoice", frm.doc.sales_invoice));
+			if (inv.docstatus === 0) {
+				frm.page.set_secondary_action(__("Review Invoice"), () => go("Sales Invoice", frm.doc.sales_invoice));
+				return big("Submit Invoice", () => frappe.confirm(__("Submit the invoice? It cannot be edited afterwards."),
+					() => frappe.call({ method: api + "submit_invoice", args: { job: frm.doc.name }, freeze: true }).then(() => frm.reload_doc())));
+			}
 			if (inv.outstanding_amount > 0) {
 				return big("Receive Payment", () => window.garage_receive_payment(frm.doc.sales_invoice, inv.outstanding_amount, () => frm.reload_doc()));
 			}
