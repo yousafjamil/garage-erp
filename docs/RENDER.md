@@ -5,7 +5,19 @@ on every restart). It runs on **one paid web service with a persistent disk**, u
 container: MariaDB 11.8, Redis, web server, background worker, scheduler, real-time service and nginx (supervised by supervisord).
 Measured locally with a 2 GB limit: about 750 MB in use, all tests passing.
 
-## Create it
+## Free plan: demo mode (works, but nothing is kept)
+`render.free.yaml` (or the same four settings by hand) runs a ready-made **demo**: sample customers, cars and jobs at every stage are baked
+into the image (`render/seed`), so a start only loads about 1 MB of data and needs no install. Measured with a hard 512 MB limit
+(x86 and ARM): ready in about 20 s, 320 MB idle, about 430 MB after generating invoice/quotation/job-card PDFs and four reports, no kills.
+Settings on the service: `LITE=1`, `DEMO_SEED=1`, `SITE_NAME=garage.local`, `ADMIN_PASSWORD=Garage@Demo2026`, Dockerfile path
+`./render/Dockerfile`, context `.`, health check `/healthz`, **no disk**.
+- Logins (password `Garage@Demo2026`): `Administrator`, `manager.demo@example.com`, `reception.demo@example.com`, `technician.demo@example.com`.
+- **All changes are lost** whenever the service restarts or spins down (free services sleep after ~15 minutes idle; the next visit takes about a minute).
+- Background jobs, scheduled emails and reminders do not run (LITE). One or two people at a time; leave generous gaps between PDFs.
+- To refresh the sample data: `./dc exec backend bench --site garage.localhost execute garage_management.demo.seed.load` on a clean site, back it up,
+  and replace `render/seed/demo-database.sql.gz` (the site must be named `garage.local`).
+
+## Create it (paid, keeps data)
 1. Render dashboard → **New → Blueprint** → pick the `garage-erp` repo (it reads `render.yaml`), or edit your existing service:
    - **Dockerfile Path** `./render/Dockerfile`, **Docker Build Context Directory** `.`
    - **Instance type**: *Standard* (2 GB RAM) or larger. (Check Render's pricing page for the current price.)

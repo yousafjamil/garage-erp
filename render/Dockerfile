@@ -20,6 +20,7 @@ RUN env/bin/pip install --no-cache-dir --no-deps -e apps/garage_management \
  && chmod -R g=u apps/garage_management
 
 USER root
+COPY render/seed /seed
 COPY render/entrypoint.sh render/bootstrap-site.sh render/start-nginx.sh /usr/local/bin/
 COPY render/supervisord.conf /etc/supervisor/garage.conf
 COPY render/supervisord.lite.conf /etc/supervisor/garage.lite.conf
