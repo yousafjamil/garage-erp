@@ -177,3 +177,11 @@ def create_role_profiles():
             if r not in have and frappe.db.exists("Role", r):
                 doc.append("roles", {"role": r})
         doc.save(ignore_permissions=True)
+
+
+def refresh_ui():
+    """Light-weight: rebuild the Home page / menu only (used at start-up of the free demo, which skips the full migrate)."""
+    from garage_management.setup import dashboard
+    dashboard.create()  # also (re)imports the menu file
+    frappe.db.commit()
+    frappe.clear_cache()

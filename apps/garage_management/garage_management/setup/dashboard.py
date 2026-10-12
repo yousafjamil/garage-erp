@@ -40,8 +40,8 @@ CHARTS = [
 
 SHORTCUTS = [  # label, doctype/report, type, view
     ("New Check-In", "Vehicle Check-In", "DocType", "New"),
-    ("Repair Jobs", "Repair Job", "DocType", "List"),
-    ("Vehicles", "Garage Vehicle", "DocType", "List"),
+    ("Jobs", "Repair Job", "DocType", "List"),
+    ("Cars", "Garage Vehicle", "DocType", "List"),
     ("Customers", "Customer", "DocType", "List"),
     ("Quotations", "Quotation", "DocType", "List"),
     ("Invoices", "Sales Invoice", "DocType", "List"),
@@ -88,15 +88,17 @@ def _fix_currency():
 
 
 def _workspace():
-    card_names = [c[0] for c in CARDS] + ["Low Stock Parts"]
+    # Home page: 6 big buttons, 6 key numbers, then a small "More" row. Nothing else (charts/reports are one click away under More).
+    main_tiles = ["New Check-In", "Jobs", "Customers", "Cars", "Quotations", "Invoices"]
+    key_cards = ["Today's Jobs", "Vehicles In Garage", "Waiting for Approval", "Ready for Delivery", "Outstanding Payments", "Monthly Revenue"]
+    more = [s[0] for s in SHORTCUTS if s[0] not in main_tiles] + [r for r in REPORT_LINKS[:3]]
+    card_names = [c[0] for c in CARDS] + ["Low Stock Parts"]  # all cards stay defined; the page shows only the key ones
     blocks = [{"id": "gh0", "type": "header", "data": {"text": '<span class="h4"><b>What would you like to do?</b></span>', "col": 12}}]
-    blocks += [{"id": f"sc{i}", "type": "shortcut", "data": {"shortcut_name": s[0], "col": 3}} for i, s in enumerate(SHORTCUTS)]
-    blocks += [{"id": "gh1", "type": "header", "data": {"text": '<span class="h4"><b>Garage Today</b></span>', "col": 12}}]
-    blocks += [{"id": f"nc{i}", "type": "number_card", "data": {"number_card_name": n, "col": 3}} for i, n in enumerate(card_names)]
-    blocks += [{"id": "gh2", "type": "header", "data": {"text": '<span class="h4"><b>Charts</b></span>', "col": 12}}]
-    blocks += [{"id": f"ch{i}", "type": "chart", "data": {"chart_name": c["chart_name"], "col": 4 if i == 0 else 8}} for i, c in enumerate(CHARTS[:2])]
-    blocks += [{"id": "gh4", "type": "header", "data": {"text": '<span class="h4"><b>Reports</b></span>', "col": 12}}]
-    blocks += [{"id": f"rp{i}", "type": "shortcut", "data": {"shortcut_name": r, "col": 3}} for i, r in enumerate(REPORT_LINKS)]
+    blocks += [{"id": f"sc{i}", "type": "shortcut", "data": {"shortcut_name": n, "col": 4}} for i, n in enumerate(main_tiles)]
+    blocks += [{"id": "gh1", "type": "header", "data": {"text": '<span class="h4"><b>Today</b></span>', "col": 12}}]
+    blocks += [{"id": f"nc{i}", "type": "number_card", "data": {"number_card_name": n, "col": 4}} for i, n in enumerate(key_cards)]
+    blocks += [{"id": "gh4", "type": "header", "data": {"text": '<span class="h6 text-muted">More</span>', "col": 12}}]
+    blocks += [{"id": f"mo{i}", "type": "shortcut", "data": {"shortcut_name": n, "col": 3}} for i, n in enumerate(more)]
     if frappe.db.exists("Workspace", "Garage"):
         if frappe.db.get_value("Workspace", "Garage", "content") == json.dumps(blocks):
             return
@@ -119,42 +121,17 @@ def _workspace():
 SIDEBAR_NAME = "Garage Management"  # same as the module name, so it replaces the auto-generated menu
 
 
-def _sidebar_items():
-    link = lambda label, icon, ltype, target, child=0: dict(label=label, icon=icon, link_type=ltype, link_to=target, type="Link",
-                                                           collapsible=1, child=child)
-    section = lambda label, icon: dict(label=label, icon=icon, type="Section Break", link_type="DocType", collapsible=1, indent=1)
-    items = [link("Home", "house", "Workspace", "Garage"),
-             link("New Check-In", "log-in", "DocType", "Vehicle Check-In"),
-             link("Repair Jobs", "wrench", "DocType", "Repair Job"),
-             link("Inspections", "clipboard-check", "DocType", "Vehicle Inspection"),
-             link("Customers", "users", "DocType", "Customer"),
-             link("Vehicles", "car", "DocType", "Garage Vehicle"),
-             link("Quotations", "receipt-text", "DocType", "Quotation"),
-             link("Invoices", "receipt", "DocType", "Sales Invoice"),
-             link("Payments", "wallet", "DocType", "Payment Entry"),
-             link("Parts & Services", "package", "DocType", "Item"),
-             section("Reports", "sheet")]
-    items += [link(r, "", "Report", r, child=1) for r in REPORT_LINKS[:7]]
-    items += [link("Settings", "settings", "DocType", "Garage Settings")]
-    return items
-
-
 def _sidebar_and_icon():
-    """The left-hand menu. v16 reads the `Sidebar` doctype; a sidebar named like the module replaces the automatic one."""
-    items = _sidebar_items()
-    for legacy in ("Garage", SIDEBAR_NAME):  # earlier attempts used the older 'Workspace Sidebar' doctype
+    """The left-hand menu ships as a standard file (garage_management/sidebar/garage_management/garage_management.json), like
+    ERPNext's own modules - an app's own menu cannot be created from code outside developer mode. Here we only remove
+    copies made by earlier versions."""
+    for legacy in ("Garage", SIDEBAR_NAME):
         if frappe.db.exists("Workspace Sidebar", legacy):
             frappe.delete_doc("Workspace Sidebar", legacy, force=True, ignore_permissions=True)
-    existing = frappe.db.exists("Sidebar", SIDEBAR_NAME)
-    if existing and len(frappe.get_doc("Sidebar", SIDEBAR_NAME).items) != len(items):
+    if frappe.db.exists("Sidebar", SIDEBAR_NAME) and not frappe.db.get_value("Sidebar", SIDEBAR_NAME, "standard"):
         frappe.delete_doc("Sidebar", SIDEBAR_NAME, force=True, ignore_permissions=True)
-        existing = False
-    if not existing:
-        sb = frappe.new_doc("Sidebar")
-        sb.update({"title": SIDEBAR_NAME, "header_icon": "wrench", "module": MODULE, "app": "garage_management", "standard": 0})
-        for row in items:
-            row = {k: v for k, v in row.items() if k != "link_type" or v != "Workspace Sidebar"}
-            sb.append("items", row)
-        sb.insert(ignore_permissions=True)
     if frappe.db.exists("Desktop Icon", "Garage"):
-        frappe.delete_doc("Desktop Icon", "Garage", force=True, ignore_permissions=True)  # the launcher tile comes from the app itself
+        frappe.delete_doc("Desktop Icon", "Garage", force=True, ignore_permissions=True)
+    from frappe.modules.import_file import import_file_by_path
+    import_file_by_path(frappe.get_app_path("garage_management", "garage_management", "sidebar", "garage_management",
+                                            "garage_management.json"), force=True)

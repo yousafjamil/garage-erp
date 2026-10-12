@@ -324,3 +324,4 @@ override_whitelisted_methods = {"frappe.apps.get_apps": "garage_management.api.w
 email_brand_image = "assets/garage_management/images/logo.png"
 
 doc_events = {"Customer": {"on_update": "garage_management.api.customer.sync_contact"}}
+app_include_css = "/assets/garage_management/css/garage.css"

@@ -32,6 +32,8 @@ if [ "${DEMO_SEED:-0}" = "1" ] && [ ! -d "$BENCH/sites/$SITE" ] && [ -f /seed/de
 {"db_name":"$DBN","db_user":"$DBN","db_password":"$DBPW","db_type":"mariadb","encryption_key":"$KEY","host_name":"$URL"}
 JSON
   if [ -n "${ADMIN_PASSWORD:-}" ]; then bench --site "$SITE" set-admin-password "$ADMIN_PASSWORD" || true; fi
+  # the baked data may predate the latest Home page / menu: rebuild just those (cheap) so no new seed is needed for UI tweaks
+  bench --site "$SITE" execute garage_management.setup.install.refresh_ui || true
   echo "[bootstrap] demo database restored"
 fi
 # the site folder (files, uploads, site_config with DB credentials) is kept on the persistent disk

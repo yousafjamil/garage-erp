@@ -36,7 +36,7 @@ Type in the top search bar: customer name or phone, plate, VIN, job/quotation/in
 
 ## What each person sees (Simple Mode)
 Everyone signs in to the **Garage** home page with big buttons ("What would you like to do?") and a short left menu:
-Home · New Check-In · Repair Jobs · Inspections · Customers · Vehicles · Quotations · Invoices · Payments · Parts & Services · Reports · Settings.
+**Home · Jobs · Customers · Cars · Invoices** (five entries). Everything else - New Check-In, Quotations, Payments, Parts & Services, Garage Settings, reports - is a button on the Home page ("What would you like to do?" / "More") or comes from the big button on a job.
 The menu only shows what the person is allowed to use (a receptionist has no Invoices/Payments/Settings; a technician lands directly on
 **their own** jobs). Owner and Accountant also have the full accounting, stock and purchasing screens when needed. Nothing is deleted —
 it is only kept out of the way.
