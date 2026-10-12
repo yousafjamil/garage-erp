@@ -1,2 +1,2 @@
-/* Simple mode: hide the sidebar's built-in Search / Notification rows (search is still Ctrl+K). */
-.standard-items-band { display: none !important; }
+/* Simple mode: hide the sidebar's Notification row (Search stays). */
+.sidebar-notification { display: none !important; }

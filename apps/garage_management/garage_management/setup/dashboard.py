@@ -40,8 +40,8 @@ CHARTS = [
 
 SHORTCUTS = [  # label, doctype/report, type, view
     ("New Check-In", "Vehicle Check-In", "DocType", "New"),
-    ("Jobs", "Repair Job", "DocType", "List"),
-    ("Cars", "Garage Vehicle", "DocType", "List"),
+    ("Repair Jobs", "Repair Job", "DocType", "List"),
+    ("Vehicles", "Garage Vehicle", "DocType", "List"),
     ("Customers", "Customer", "DocType", "List"),
     ("Quotations", "Quotation", "DocType", "List"),
     ("Invoices", "Sales Invoice", "DocType", "List"),
@@ -89,7 +89,7 @@ def _fix_currency():
 
 def _workspace():
     # Home page: 6 big buttons, 6 key numbers, then a small "More" row. Nothing else (charts/reports are one click away under More).
-    main_tiles = ["New Check-In", "Jobs", "Customers", "Cars", "Quotations", "Invoices"]
+    main_tiles = ["New Check-In", "Repair Jobs", "Customers", "Vehicles", "Quotations", "Invoices"]
     key_cards = ["Today's Jobs", "Vehicles In Garage", "Waiting for Approval", "Ready for Delivery", "Outstanding Payments", "Monthly Revenue"]
     more = [s[0] for s in SHORTCUTS if s[0] not in main_tiles] + [r for r in REPORT_LINKS[:3]]
     card_names = [c[0] for c in CARDS] + ["Low Stock Parts"]  # all cards stay defined; the page shows only the key ones
