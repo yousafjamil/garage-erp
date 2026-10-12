@@ -9,3 +9,6 @@ deploy/.env.rehearsal
 deploy/.env.pg
 __pycache__/
 *.pyc
+
+# the demo seed IS meant to be committed (used by the free-tier demo image)
+!render/seed/demo-database.sql.gz
