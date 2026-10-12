@@ -19,4 +19,6 @@ chown -R frappe:root "$DATA/sites" "$DATA/redis"
 chown frappe:root "$DATA/.dbroot"; chmod 600 "$DATA/.dbroot"
 
 export PORT="${PORT:-10000}"
-exec /usr/bin/supervisord -n -c /etc/supervisor/garage.conf
+CONF=/etc/supervisor/garage.conf
+[ "${LITE:-0}" = "1" ] && CONF=/etc/supervisor/garage.lite.conf
+exec /usr/bin/supervisord -n -c "$CONF"

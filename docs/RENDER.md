@@ -18,6 +18,15 @@ Measured locally with a 2 GB limit: about 750 MB in use, all tests passing.
 4. In Render press **Manual Deploy → Restart** (or redeploy) once: on every start the app migrates itself and applies the garage details
    (address, letterhead, roles, workflow, reports). Then set Tax ID (TRN), SMTP (Email Account) and create users with Role Profiles.
 
+## Small instance ("LITE" mode, 512 MB)
+Set the environment variable `LITE=1` to run a stripped-down profile: one web worker, small database buffers, **no background worker, scheduler,
+real-time updates or daily backup**, and it skips the migration at start (a migration needs more memory than 512 MB). Measured here with a hard
+512 MB limit: boots cleanly, about 380 MB idle and about 440 MB after browsing a few pages. **There is almost no headroom**: generating a PDF
+(its own process) or a big report can push it over and the process is killed and restarted. Scheduled emails, notifications and queued jobs do
+not run. Treat it as a minimum for 1-2 users, not as a recommendation. After updating the code, run one deploy with `FORCE_MIGRATE=1` on a larger
+instance (or temporarily without `LITE`) so the database is migrated. The **Free plan cannot be used even in LITE mode**: it has no disk, so every
+restart or 15-minute idle spin-down would erase the data.
+
 ## What lives where
 | Data | Location |
 |---|---|

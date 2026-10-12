@@ -28,6 +28,10 @@ if [ ! -d "$BENCH/sites/$SITE" ]; then
     || { echo "[bootstrap] new-site FAILED"; exit 1; }
   mv "$BENCH/sites/$SITE" "$DATA/sites/$SITE" && ln -s "$DATA/sites/$SITE" "$BENCH/sites/$SITE"
 fi
+if [ "${LITE:-0}" = "1" ] && [ "${FORCE_MIGRATE:-0}" != "1" ]; then
+  # 512 MB instances cannot fit "bench migrate" (it gets OOM-killed). Set FORCE_MIGRATE=1 once, on a bigger instance, after updating the code.
+  echo "[bootstrap] LITE mode: skipping migrate"; touch "$DATA/.ready"; echo "[bootstrap] ready"; exit 0
+fi
 echo "[bootstrap] migrating..."
 bench --site "$SITE" migrate
 bench --site "$SITE" enable-scheduler

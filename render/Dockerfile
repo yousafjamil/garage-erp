@@ -22,6 +22,7 @@ RUN env/bin/pip install --no-cache-dir --no-deps -e apps/garage_management \
 USER root
 COPY render/entrypoint.sh render/bootstrap-site.sh render/start-nginx.sh /usr/local/bin/
 COPY render/supervisord.conf /etc/supervisor/garage.conf
+COPY render/supervisord.lite.conf /etc/supervisor/garage.lite.conf
 RUN chmod 755 /usr/local/bin/entrypoint.sh /usr/local/bin/bootstrap-site.sh /usr/local/bin/start-nginx.sh
 ENV DATA_DIR=/data
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
