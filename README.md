@@ -1,40 +1,33 @@
-# Garage ERP — Candle Auto Repair Workshop
+# Garage ERP — Candle Auto Repair Workshop & Pak Mohmand General Transport
 
-A garage management system built on **ERPNext v16 / Frappe v16** (open-source ERP) plus one small custom Frappe app,
-`garage_management`. Sized for a small garage (a handful of users). Currency AED, UAE VAT.
+One simple web app for **two businesses**, built on **ERPNext v16 / Frappe v16** plus one small custom app, `garage_management`.
+Currency AED, UAE VAT 5 %. Each business has its own **Quotation, Tax Invoice, Job Card, Statement and Receipt**, numbered separately,
+printed on its own letterhead and looking like the supplied sample documents.
 
 ```
-Customer → Vehicle → Check-In → Inspection → Repair Job → Quotation → Customer Approval
-        → Repair → Quality Check → Invoice → Payment → Delivery → Vehicle Service History
+Job Card → Quotation → Tax Invoice → Payment (oldest invoice first) → Monthly Statement (balance carried forward)
 ```
 
-| Need | Where it lives |
-|---|---|
-| Customers, items (services/parts), stock, suppliers, purchasing, quotations, invoices, payments, VAT, email, PDFs, accounting, reports | **Standard ERPNext** (configured, not modified) |
-| Vehicles, check-in, inspection, repair job (workflow), approval gate, job→quotation→invoice, service history, dashboard | **`apps/garage_management`** (custom app) |
+Menu (7 items): **Home · Job Cards · Quotations · Invoices · Statements · Payments · Customers**.
 
-ERPNext core is never edited, so upgrades stay simple.
+Every quotation/invoice has its own free-text lines, vehicle / reference, LPO reference and note; the company wording is only an editable default.
 
 ## Repository layout
 ```
-apps/garage_management/   custom Frappe app (DocTypes, workflow, reports, print formats, setup code, tests)
+apps/garage_management/   custom app (Job Card + Statement DocTypes, print formats, setup code, demo data, tests)
 frappe_docker/            official frappe/frappe_docker (vendored, unmodified)
 compose.garage.yaml       dev override: mounts the app into the containers
 dc                        dev wrapper:  ./dc ps | ./dc exec backend bench ...
-deploy/                   production: Dockerfile, prod.sh, deploy.sh, backup.sh, restore.sh, bootstrap-vps.sh
-docs/                     guides (see below)
+deploy/                   production (Hostinger VPS later)
+render/ render*.yaml      free Render demo (baked sample data) / paid single service
+docs/                     guides
 ```
 
 ## Documentation
-- [docs/USER_GUIDE.md](docs/USER_GUIDE.md) — daily garage workflow, roles, adding users
-- [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) — run and develop on a Mac
-- [docs/DEPLOYMENT_HOSTINGER.md](docs/DEPLOYMENT_HOSTINGER.md) — production on a Hostinger VPS, security, backups, updates
-- [docs/PRINT_FORMATS.md](docs/PRINT_FORMATS.md) — documents/letterhead and what the client can edit
-- [docs/ERPNEXT_MAPPING.md](docs/ERPNEXT_MAPPING.md) — what is standard ERPNext vs custom, and why
-- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
-- [apps/garage_management/README.md](apps/garage_management/README.md) — the custom app
+- [docs/USER_GUIDE.md](docs/USER_GUIDE.md) — daily use
+- [docs/PRINT_FORMATS.md](docs/PRINT_FORMATS.md) — documents and letterheads
+- [docs/RENDER.md](docs/RENDER.md) — Render (free demo / paid)
+- [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md), [docs/DEPLOYMENT_HOSTINGER.md](docs/DEPLOYMENT_HOSTINGER.md), [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 
-## Status
-All phases through production rehearsal are done and tested locally (end-to-end 24/24, role permissions 44/44,
-backup→restore verified on a production-style stack). The only step left is the real VPS deployment
-(needs the VPS and domain) — follow `docs/DEPLOYMENT_HOSTINGER.md`.
+## Tests
+`./dc exec -T backend bench --site garage.localhost execute garage_management.tests.simple_scenario.run` — end-to-end for both businesses (15 checks).

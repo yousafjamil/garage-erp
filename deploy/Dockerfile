@@ -5,6 +5,9 @@
 ARG ERPNEXT_VERSION=v16.50.0
 FROM frappe/erpnext:${ERPNEXT_VERSION}
 
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends fonts-liberation && rm -rf /var/lib/apt/lists/*
+
 USER frappe
 WORKDIR /home/frappe/frappe-bench
 

@@ -63,3 +63,11 @@ def configure_search():
     gs.save(ignore_permissions=True)
     make_property_setter("Customer", None, "search_fields", "customer_name,customer_group,territory,mobile_no", "Data",
                          for_doctype=True, validate_fields_for_doctype=False)
+
+
+def refresh_ui():
+    """Light-weight: rebuild the Home page / menu only (used at start-up of the free demo, which skips the full migrate)."""
+    from garage_management.setup import dashboard
+    dashboard.create()  # also (re)imports the menu file
+    frappe.db.commit()
+    frappe.clear_cache()

@@ -54,6 +54,6 @@ fi
 echo "[bootstrap] migrating..."
 bench --site "$SITE" migrate
 bench --site "$SITE" enable-scheduler
-bench --site "$SITE" execute garage_management.setup.company.apply || echo "[bootstrap] company details are applied after the Setup Wizard + restart"
+bench --site "$SITE" execute garage_management.setup.install.setup_all || echo "[bootstrap] business setup is applied after the Setup Wizard + restart"
 touch "$DATA/.ready"
 echo "[bootstrap] ready"

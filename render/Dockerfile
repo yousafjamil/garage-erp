@@ -6,7 +6,7 @@ FROM frappe/erpnext:${ERPNEXT_VERSION}
 
 USER root
 RUN apt-get update \
- && apt-get install -y --no-install-recommends mariadb-server redis-server supervisor gettext-base procps openssl \
+ && apt-get install -y --no-install-recommends mariadb-server redis-server supervisor gettext-base procps openssl fonts-liberation \
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /var/log/supervisor /run/mysqld && chown mysql:mysql /run/mysqld
 

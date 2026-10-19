@@ -6,15 +6,15 @@ container: MariaDB 11.8, Redis, web server, background worker, scheduler, real-t
 Measured locally with a 2 GB limit: about 750 MB in use, all tests passing.
 
 ## Free plan: demo mode (works, but nothing is kept)
-`render.free.yaml` (or the same four settings by hand) runs a ready-made **demo**: sample customers, cars and jobs at every stage are baked
+`render.free.yaml` (or the same four settings by hand) runs a ready-made **demo**: sample documents of both businesses (customer Emirates LandScape: garage invoices, quotations, a job card, a part-paid statement, and transport documents) are baked
 into the image (`render/seed`), so a start only loads about 1 MB of data and needs no install. Measured with a hard 512 MB limit
 (x86 and ARM): ready in about 20 s, 320 MB idle, about 430 MB after generating invoice/quotation/job-card PDFs and four reports, no kills.
 Settings on the service: `LITE=1`, `DEMO_SEED=1`, `SITE_NAME=garage.local`, `ADMIN_PASSWORD=Garage@Demo2026`, Dockerfile path
 `./render/Dockerfile`, context `.`, health check `/healthz`, **no disk**.
-- Logins (password `Garage@Demo2026`): `Administrator`, `manager.demo@example.com`, `reception.demo@example.com`, `technician.demo@example.com`.
+- Logins (password `Garage@Demo2026`): `Administrator`, `manager.demo@example.com`, `reception.demo@example.com`.
 - **All changes are lost** whenever the service restarts or spins down (free services sleep after ~15 minutes idle; the next visit takes about a minute).
 - Background jobs, scheduled emails and reminders do not run (LITE). One or two people at a time; leave generous gaps between PDFs.
-- To refresh the sample data: `./dc exec backend bench --site garage.localhost execute garage_management.demo.seed.load` on a clean site, back it up,
+- To refresh the sample data: `./dc exec backend bench --site garage.localhost execute garage_management.demo.seed.load` on a clean site named `garage.local` (new site, setup wizard, `setup.install.setup_all`), dump the database,
   and replace `render/seed/demo-database.sql.gz` (the site must be named `garage.local`).
 
 ## Create it (paid, keeps data)

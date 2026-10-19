@@ -1,93 +1,24 @@
-# User guide — daily garage workflow
+# User guide
 
-Sign in at your ERP address; you land directly on the **Garage** page (no app launcher). It shows: today's jobs, cars in the garage, jobs waiting
-for approval / in repair / ready, today's invoices, outstanding payments, monthly revenue, low-stock parts.
+Sign in and you land on **Home**: four figures (open job cards, quotations this month, invoiced this month, unpaid invoices) and big buttons.
+In every form, **Company** decides the business: *Candle Auto Repair Workshop* (garage) or *Pak Mohmand General Transport and Contracting LLC*.
+Each business has its own numbering, VAT wording, bank details and letterhead.
 
-## The 10 steps
-1. **Customer** — *Customers → New* (name, phone, email). One customer can own many cars.
-2. **Vehicle** — *Garage Vehicle → New*: plate, VIN, make/model/year, owner. (Or open the customer → Connections → Garage Vehicle → +.)
-3. **Check-In** — open the vehicle → **Create → Check In**. Mileage, fuel level, complaint, existing dents, keys/accessories, photos. Print the check-in form for the customer to sign.
-4. **Inspection** — from the check-in or job: **Create → Inspection**. The 13-point checklist is pre-filled; set each to Good / Attention Needed / Repair Required / Critical, add notes and photos.
-5. **Repair Job** — from the check-in: **Create → Repair Job** (starts as *Checked In*). Assign the technician; add **Services & Labor** and **Spare Parts** (rates fill in from the item; edit if needed).
-6. **Quotation** — on the job: **Create → Quotation**, review, **Submit**, then **Print/Email** (PDF with letterhead). On the job, use *Actions → Send for Approval*.
-7. **Customer approval** — on the submitted quotation: **Customer Decision → Customer Approved / Rejected** (enter who approved, comments). Approved → job becomes *Approved*. **Repair cannot start before this** (a Manager/Owner can override).
-8. **Repair** — job *Actions*: Start Repair → Send to Quality Check → Quality Passed (Manager/Owner) → *Ready for Delivery*.
-9. **Invoice & payment** — on the job: **Create → Invoice** (stock of parts is reduced when the invoice is submitted). Submit it, then on the invoice **Create → Payment** (Cash / Card / Bank Transfer / Other).
-10. **Delivery** — job *Actions → Deliver Vehicle* (needs the invoice fully paid, unless overridden). Vehicle status becomes *Delivered*.
+## Daily work
+1. **Job Card** (optional) — *Job Cards → New*: company, customer, vehicle no., staff, details and lines. Buttons: **Create Quotation**, **Create Invoice**, **Mark Completed**.
+2. **Quotation** — *Quotations → New*. Pick company and customer, type the lines (description, qty, rate), vehicle / reference and a note if needed. No VAT is added; the company's VAT wording is printed. **Print** or **Download PDF** or **Email**.
+3. **Tax Invoice** — *Invoices → New* (or from a job card). VAT 5 % is added automatically. Add the LPO reference if the customer gave one. Submit, then Print.
+4. **Payment** — on an invoice or customer press **Receive Payment**: amount, mode (Cash / Card / Bank Transfer / Cheque / Other), date, reference. The amount is applied to that customer's **oldest unpaid invoices first**, for that business only. Paying more than owed is refused. A **Receipt** can be printed.
+5. **Statement** — *Statements → New*: company, customer, from/to date → **Refresh**. It lists the invoices of the period **and any older invoice still unpaid**, with the payments received and the **balance due**. Print it and send it to the customer.
 
-**Service history:** open any vehicle → **Service History** button (or Reports → Vehicle Service History): every job with
-date, mileage, complaint, diagnosis, services, parts, technician, invoice, paid/outstanding.
+## Monthly agreements
+A company's invoices pile up during the month (e.g. 30,000 AED). Next month more are added (20,000). When the customer pays part (say 30,000), those payments clear the oldest invoices first and the rest stays unpaid and appears on the next statement, so nothing is lost or paid twice.
 
-## Making the system yours (no developer needed)
-Open **Garage → Garage Settings** (Owner/Manager). Everything below updates the whole system and all printed/emailed documents when you press Save:
-- **Identity:** garage name (English/Arabic), tagline, **logo** (login page, menu bar, browser tab), accent colour of document tables.
-- **Letterhead:** upload your own **header** and **footer** images (full-width banners), or switch *Letterhead Style* to **Text** to build a simple header/footer from name, phones, email and address.
-- **Quotation / Invoice / Job Card / Check-In / Receipt:** titles (English + Arabic), terms & conditions, **bank/payment details**, notes, the check-in declaration, a thank-you line, and how many days a quotation is valid.
-Tip: tables and numbers come from the system and cannot be broken by editing these texts. For a completely different layout, duplicate the print format (Printing → Print Format) — see docs/PRINT_FORMATS.md.
-The ERPNext/Frappe names and logos are removed from the screens, menus, emails and documents; the garage's own name and logo are shown instead.
+## Free text
+Nothing is fixed: every quotation or invoice has its own lines and note. The company's default note (for example "Payment will be received with in 30 days…") is only filled in as a starting text and can be changed on each document.
 
-## Customer 360
-*Reports → Customer 360* → pick a customer (type name or phone): contact details, all their vehicles, every repair job,
-**total spent** and **still owes**, last visit. Phone search works when the phone is saved on the customer's primary
-Contact (use the "+ New Customer" popup and fill Mobile/Email).
+## Search and customers
+Use the top search bar for customer names, document numbers and vehicle numbers. *Customers → New* takes name, TRN, address, phone and email.
 
-## Searching
-Type in the top search bar: customer name or phone, plate, VIN, job/quotation/invoice number, part name or code.
-
-## What each person sees (Simple Mode)
-Everyone signs in to the **Garage** home page with big buttons ("What would you like to do?") and a short left menu:
-Search · Home · New Check-In · Repair Jobs · Customers · Vehicles · Quotations · Invoices · Payments · Parts & Services · Reports · Settings. The Notification and Inspections entries are hidden (inspections are still reachable from a job: Create > Inspection).
-The menu only shows what the person is allowed to use (a receptionist has no Invoices/Payments/Settings; a technician lands directly on
-**their own** jobs). Owner and Accountant also have the full accounting, stock and purchasing screens when needed. Nothing is deleted —
-it is only kept out of the way.
-
-## The big button
-On every repair job the big dark button at the top right always shows the next thing to do, and the blue line above it explains the step in plain words:
-*Next: Start Inspection → Create Quotation → (Review Quotation) → Submit Quotation → Customer Decision → Next: Start Repair →
-Next: Send to Quality Check → Next: Quality Passed → Create Invoice → Submit Invoice → Receive Payment → Next: Deliver Vehicle.*
-- **Submit Quotation** asks you to confirm the total, then offers to print it (use **Email** on the quotation to send it).
-- **Customer Decision**: Approved / Rejected, who decided, optional comments.
-- **Receive Payment**: amount (full balance by default; type less for a part-payment), Cash / Card / Bank Transfer / Other, optional reference; then offers the receipt.
-- Front-desk staff (receptionist) cannot invoice or take payment: they see "Waiting for the manager or accountant…" and can press **Next: Deliver Vehicle** once it is paid.
-
-## WhatsApp and reminders
-- **WhatsApp button** (green) on a repair job and on a submitted quotation: opens WhatsApp with the customer's number and the message already typed
-  (e.g. "Hello Ahmed, your Toyota Corolla (ABC-123) is ready for collection."). Press send. The wording is in **Garage Settings → Messages & Reminders**.
-  The customer needs a mobile number saved (UAE numbers like 050… are converted automatically).
-- **Next service:** when a job is completed the car's *Next Service Date* and *Next Service Mileage* are filled in automatically
-  (after 180 days / 5,000 km by default - change in Garage Settings). You can also edit them on the vehicle.
-- **Vehicle Reminders** report (Reports menu): cars whose service, registration or insurance is due soon, with the owner's phone.
-  Every morning the receptionist, managers and owner also get a notification when something is due.
-
-## Simple screens
-Quotation, Invoice, Customer, Item and Payment forms show only what a garage uses (the accounting, shipping, price-list, sales-team and tax-withholding
-sections are hidden). Every document has big **Print**, **Download PDF** and **Email** buttons at the top, and a repair job shows a blue line saying
-what to do next plus a big **Next** button. When someone really needs everything: open the **⋯ menu → Show all fields** (and **Simple view** to come back).
-A new customer needs only **Name, Type, Mobile and Email** — the phone number then finds the customer in the search bar.
-
-## Roles (Role Profiles)
-| Profile | For | Can do |
-|---|---|---|
-| Garage Owner | owner | everything incl. accounting, purchasing, items, reports |
-| Garage Manager | manager | jobs, customers, vehicles, quotations, invoices, payments, parts; override rules |
-| Receptionist | front desk | customers, vehicles, check-in, quotations, job basics, delivery |
-| Technician | mechanic | **only jobs assigned to them**: inspection, notes, services/parts on the job |
-| Accountant | bookkeeper | invoices, payments, journals, financial reports (read-only on jobs) |
-| Inventory Manager | parts/stock | items, stock, suppliers, purchase orders |
-
-**Add a user:** *Settings → Users → New* → email, name → **Role Profile** (pick from the table) → Save → *Send Welcome Email* or set a password.
-Technicians must be assigned on the job (*Technician* field) to see it.
-
-## Money & VAT
-Prices are entered **excluding VAT**; the default tax template adds VAT (rate configured in *Sales Taxes and Charges
-Template*, not in code). Invoices show exact amounts (no rounding to whole dirhams). **Ask the accountant to confirm**:
-VAT rate/treatment per item (standard / zero-rated / exempt), the company **TRN** (Company → Tax ID), financial-year
-start, and the default accounts (receivable, income, cost of sales, cash, bank).
-
-## Low stock
-Set a minimum level on each part (*Item → Reorder / Safety Stock*). The dashboard card and report **Low Stock Parts**
-show parts at or below it; owners, managers and inventory staff get a daily notification.
-
-## Printing / emailing
-Every document has a Print menu with the garage format (Quotation, Tax Invoice, Job Card, Vehicle Inspection,
-Vehicle Check-In, Payment Receipt). Use the *Email* button on a document to send the PDF.
+## Forms look too long?
+Forms show only what is needed. Use **Show all fields** at the top of a form if a standard field is required.

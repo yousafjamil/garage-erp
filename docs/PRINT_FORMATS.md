@@ -1,12 +1,11 @@
 # Print formats
 
-Six formats ship with the system: Garage Quotation, Garage Tax Invoice, Garage Job Card, Garage Vehicle Inspection,
-Garage Vehicle Check-In, Garage Payment Receipt. Source: `apps/garage_management/garage_management/print_formats/*.html`
-(shared style in `_style.html`, footer in `_tail.html`), installed by `setup/print_formats.py` on every `migrate`.
+Five formats, each with a **Garage** and a **Transport** layout chosen by the company's *Print Style*: Quotation Print, Tax Invoice Print,
+Job Card Print, Statement Print, Receipt Print. Sources: `apps/garage_management/garage_management/print_formats/*.html`
+(`_base.html` macros and CSS, `_tail.html` signatures and footer). `setup/print_formats.py` installs them on every `migrate`.
 
-**Client-editable without code:** Garage Settings (titles, terms, bank details, notes, colours, letterhead images).
-
-**Layout changes:** *Printing → Print Format → (format) → Menu → Duplicate*, edit the HTML, Save, pick it in the document's Print menu.
-Copies live in the site database only; ask the developer to put a final version in the repo so every install gets it.
-Page margins are set in `_style.html` (`.print-format { margin-... }`): the header/footer images run edge to edge, so left/right margins are 0 and
-the content area has its own padding. The PDF engine (wkhtmltopdf) reads those margins from that CSS rule.
+- Letterhead/footer images are per company (`public/images`, Letter Head records created by `setup/companies.py`).
+- Company defaults editable in *Company*: bank details, quotation VAT wording, quotation note, invoice note.
+- Page margins: top/bottom are fields on the Print Format record (8 / 64 mm, to leave room for the footer image); left/right are CSS (0, edge-to-edge letterhead). A CSS top/bottom margin would be counted twice and create a blank second page.
+- Keep a document on one page: the invoice/quotation templates pad the table with blank rows (`fill`) depending on the number of lines.
+- Check the output with `tests/simple_scenario.py` (writes PDFs to `/tmp/s_*.pdf`).

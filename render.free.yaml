@@ -1,6 +1,6 @@
 # FREE-tier DEMO blueprint (no disk, 512 MB): comes up with ready-made sample data; everything resets on every restart / idle spin-down.
-# Not for real records. Logins: Administrator / Garage@Demo2026, manager.demo@example.com, reception.demo@example.com,
-# technician.demo@example.com (all with password Garage@Demo2026).
+# Not for real records. Logins: Administrator / Garage@Demo2026, manager.demo@example.com, reception.demo@example.com
+# (all with password Garage@Demo2026).
 services:
   - type: web
     name: garage-erp
