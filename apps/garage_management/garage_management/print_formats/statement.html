@@ -1,0 +1,20 @@
+{% set cname = frappe.db.get_value("Customer", doc.customer, "customer_name") or doc.customer %}
+{% set show_bal = (doc.total_paid or 0)|float > 0.004 %}
+{% set blanks = [8 - doc.lines|length, 0]|max %}
+{% set head = "blue" if style == "Transport" else "" %}
+<div class="doc">
+  <div class="c" style="margin-top:14px"><span style="color:{{ '#e8672a' if style == 'Transport' else '#c0392b' }};font-size:19px;text-decoration:underline">STATEMENT</span></div>
+  <div class="c" style="margin-top:8px"><span style="color:#3b5fc0;font-size:20px;text-decoration:underline">{{ cname }}</span></div>
+  <div class="c small" style="margin-top:4px;font-weight:normal">{{ doc.get_formatted("from_date") }} &nbsp;to&nbsp; {{ doc.get_formatted("to_date") }}</div>
+  <table class="grid" style="margin-top:10px;font-size:13px">
+    <tr class="{{ head }}"><th style="width:9%;white-space:nowrap">S. No</th><th>Vehicle No:</th><th style="width:17%">Invoice Date</th><th style="width:17%">Invoice No</th><th style="width:15%">Amount</th>{% if show_bal %}<th style="width:15%">Balance</th>{% endif %}</tr>
+    {% for r in doc.lines %}<tr><td class="c">{{ loop.index }}</td><td class="c" style="font-weight:normal">{{ r.vehicle_no or "" }}</td><td class="c" style="font-weight:normal">{{ frappe.utils.formatdate(r.posting_date, "dd-mm-yyyy") }}</td><td class="c" style="font-weight:normal">{{ docno(r.invoice) }}</td><td class="c" style="font-weight:normal">{{ money(r.amount) }}</td>{% if show_bal %}<td class="c" style="font-weight:normal">{{ money(r.balance) }}</td>{% endif %}</tr>{% endfor %}
+    {% for i in range(blanks) %}<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td>{% if show_bal %}<td></td>{% endif %}</tr>{% endfor %}
+    <tr class="{{ head }}"><td colspan="4" class="big">{{ words(doc.total_amount) }}</td><td class="c big">{{ money(doc.total_amount) }}</td>{% if show_bal %}<td class="c big">{{ money(doc.balance_due) }}</td>{% endif %}</tr>
+    {% if show_bal %}
+    <tr><td colspan="4" class="r">Received</td><td class="c" colspan="2">{{ money(doc.total_paid) }}</td></tr>
+    <tr class="{{ head }}"><td colspan="4" class="big">Balance Due: {{ words(doc.balance_due) }}</td><td class="c big" colspan="2">{{ money(doc.balance_due) }}</td></tr>
+    {% endif %}
+  </table>
+  {% if doc.notes %}<div class="note" style="font-weight:normal">{{ doc.notes }}</div>{% endif %}
+</div>

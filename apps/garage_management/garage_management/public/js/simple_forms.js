@@ -3,26 +3,21 @@
 const GARAGE_SIMPLE = {
 	"Quotation": {
 		tabs: ["Address & Contact", "Terms", "More Info"],
-		sections: ["Currency and Price List", "Pricing Rules", "Bundle Items", "Tax Breakup"],
-		fields: ["naming_series", "order_type", "quotation_to", "scan_barcode", "tax_category", "shipping_rule", "incoterm", "named_place"],
-		hide_when_draft: ["Customer Approval"],
+		sections: ["Currency and Price List", "Pricing Rules", "Bundle Items", "Tax Breakup", "Taxes and Charges"],
+		fields: ["naming_series", "order_type", "quotation_to", "scan_barcode", "tax_category", "shipping_rule", "incoterm", "named_place",
+			"valid_till", "apply_discount_on", "coupon_code"],
 	},
 	"Sales Invoice": {
 		tabs: ["Payments", "Address & Contact", "Terms", "More Info"],
-		sections: ["Currency and Price List", "Totals (Company Currency)", "Tax Withholding Entry", "Tax Breakup",
-			"Pricing Rules", "Packing List", "Time Sheet List"],
-		fields: ["naming_series", "is_pos", "is_return", "is_debit_note", "scan_barcode", "set_posting_time", "update_stock",
-			"cost_center", "project", "campaign", "apply_tds", "posting_time", "tax_category", "shipping_rule", "incoterm", "named_place"],
+		sections: ["Currency and Price List", "Totals (Company Currency)", "Tax Withholding Entry", "Tax Breakup", "Pricing Rules",
+			"Packing List", "Time Sheet List"],
+		fields: ["naming_series", "is_pos", "is_return", "is_debit_note", "scan_barcode", "set_posting_time", "update_stock", "cost_center",
+			"project", "campaign", "apply_tds", "posting_time", "tax_category", "shipping_rule", "incoterm", "named_place", "due_date"],
 	},
 	"Customer": {
-		tabs: ["Accounting", "Tax", "Settings", "Sales Team", "Portal Users", "More Info"],
+		tabs: ["Accounting", "Settings", "Sales Team", "Portal Users", "More Info"],
 		sections: ["Defaults", "Loyalty Points"],
 		fields: ["naming_series", "alias", "gender", "customer_group", "territory", "customer_name_in_arabic", "salutation"],
-	},
-	"Item": {
-		tabs: ["Accounting", "UOM", "Tax", "Variants", "Purchasing", "Sales", "Manufacturing", "Quality"],
-		sections: ["Item Attributes", "Foreign Trade Details", "Serial Nos / Batches", "Inventory Valuation", "Barcodes"],
-		fields: ["naming_series", "has_variants", "is_fixed_asset", "brand_section", "include_item_in_manufacturing"],
 	},
 	"Payment Entry": {
 		tabs: [],

@@ -1,1 +1,7 @@
-{% if footer and not no_letterhead %}<div id="footer-html" class="visible-pdf">{{ footer }}</div>{% endif %}
+<div class="doc" style="margin-top:10px">
+<table style="font-size:12px"><tr>
+  <td style="width:48%">Receiver's Sign: <span style="letter-spacing:1px">.............................</span> <span class="ar">توقيع المستلم</span></td>
+  <td style="width:4%"></td>
+  <td style="width:48%" class="r">Signature: <span style="letter-spacing:1px">.............................</span> <span class="ar">التوقيع</span></td></tr></table>
+</div>
+<div id="footer-html" class="visible-pdf">{{ lh.footer }}</div>

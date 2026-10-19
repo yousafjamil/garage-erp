@@ -1,23 +1,15 @@
-"""Idempotent garage configuration. Runs on install and on every migrate (via patches)."""
+"""Idempotent configuration. Runs on install and on every migrate."""
 import frappe
 
 ROLES = ["Garage Owner", "Garage Manager", "Receptionist", "Technician"]
 
 ROLE_PROFILES = {
-    "Garage Owner": ["Garage Owner", "Garage Manager", "Sales Manager", "Sales User", "Accounts Manager",
-                     "Accounts User", "Stock Manager", "Stock User", "Purchase Manager", "Purchase User", "Item Manager"],
-    "Garage Manager": ["Garage Manager", "Sales Manager", "Sales User", "Stock User", "Accounts User", "Purchase User", "Item Manager"],
-    "Receptionist": ["Receptionist", "Sales User"],
-    "Technician": ["Technician", "Stock User"],
+    "Garage Owner": ["Garage Owner", "Garage Manager", "Sales Manager", "Sales User", "Accounts Manager", "Accounts User", "Item Manager"],
+    "Garage Manager": ["Garage Manager", "Sales Manager", "Sales User", "Accounts User", "Item Manager"],
+    "Receptionist": ["Receptionist", "Sales User", "Accounts User"],
+    "Technician": ["Technician", "Sales User"],
     "Accountant": ["Accounts Manager", "Accounts User"],
-    "Inventory Manager": ["Stock Manager", "Stock User", "Purchase Manager", "Purchase User", "Item Manager"],
 }
-
-SERVICES = [
-    "Engine Oil Change", "Brake Service", "AC Service", "Engine Repair", "Transmission Repair",
-    "Wheel Alignment", "Tire Replacement", "Battery Replacement", "Diagnostic", "General Inspection",
-]
-PARTS = ["Brake Pads", "Oil Filter", "Air Filter", "Spark Plug", "Battery", "Engine Oil", "Brake Fluid"]
 
 
 def after_install():
@@ -27,21 +19,15 @@ def after_install():
 
 def setup_all():
     create_roles()
-    configure_accounting()
-    seed_catalog()
+    from garage_management.setup import companies, custom_fields, dashboard, print_formats, simplify, whitelabel
+    custom_fields.create()
+    companies.apply()
+    simplify.apply()
     create_role_profiles()
     configure_search()
-    simplify_for_small_garage()
-    from garage_management.setup import simplify_lists, whitelabel
-    simplify_lists.apply()
-    simplify_lists.set_defaults()
-    whitelabel.apply()
-    from garage_management.setup import custom_fields, dashboard, notifications, print_formats, workflow
-    custom_fields.create()
-    workflow.create()
     print_formats.create()
     dashboard.create()
-    notifications.create()
+    whitelabel.apply()
     frappe.db.commit()
 
 
@@ -49,120 +35,6 @@ def create_roles():
     for role in ROLES:
         if not frappe.db.exists("Role", role):
             frappe.get_doc({"doctype": "Role", "role_name": role, "desk_access": 1}).insert(ignore_permissions=True)
-
-
-def _company():
-    return frappe.defaults.get_global_default("company") or frappe.db.get_value("Company", {}, "name")
-
-
-def _account(company, name, abbr):
-    full = f"{name} - {abbr}"
-    return full if frappe.db.exists("Account", {"name": full, "is_group": 0}) else None
-
-
-def configure_accounting():
-    company = _company()
-    if not company:
-        return
-    abbr = frappe.db.get_value("Company", company, "abbr")
-    # UAE chart picks odd defaults (e.g. "Trade in Opening Fees" as receivable): point them at sensible accounts.
-    wanted = {
-        "default_receivable_account": "Trade Receivable",
-        "default_income_account": "Sales Account",
-        "default_expense_account": "Cost Of Goods Sold",
-        "default_cash_account": "Main Safe",
-        "default_bank_account": "Banks Current Accounts",
-    }
-    for field, acc in wanted.items():
-        full = _account(company, acc, abbr)
-        if full:
-            frappe.db.set_value("Company", company, field, full)
-
-    # Payment methods: Cash, Card, Bank Transfer, Other
-    for old, new in (("Credit Card", "Card"), ("Wire Transfer", "Bank Transfer"), ("Bank Draft", "Other")):
-        if frappe.db.exists("Mode of Payment", old) and not frappe.db.exists("Mode of Payment", new):
-            frappe.rename_doc("Mode of Payment", old, new, force=True)
-    accounts = {"Cash": "Main Safe", "Card": "Visa & Master Credit Cards",
-                "Bank Transfer": "Banks Current Accounts", "Other": "Banks Current Accounts"}
-    for mode, acc in accounts.items():
-        full = _account(company, acc, abbr)
-        if not full or not frappe.db.exists("Mode of Payment", mode):
-            continue
-        doc = frappe.get_doc("Mode of Payment", mode)
-        doc.set("accounts", [])
-        doc.append("accounts", {"company": company, "default_account": full})
-        doc.save(ignore_permissions=True)
-
-    # VAT 5% template is the default for sales and purchases; the rate itself lives in the template.
-    for dt in ("Sales Taxes and Charges Template", "Purchase Taxes and Charges Template"):
-        tmpl = f"UAE VAT 5% - {abbr}"
-        if frappe.db.exists(dt, tmpl):
-            frappe.db.set_value(dt, tmpl, "is_default", 1)
-
-    if not frappe.db.exists("Item Group", "Spare Parts"):
-        frappe.get_doc({"doctype": "Item Group", "item_group_name": "Spare Parts",
-                        "parent_item_group": "All Item Groups"}).insert(ignore_permissions=True)
-    frappe.db.set_single_value("Stock Settings", "default_warehouse", f"Stores - {abbr}")
-    # UAE VAT invoices must show exact fils (no rounding to whole dirhams) and a plain "AED" symbol.
-    frappe.db.set_single_value("Global Defaults", "disable_rounded_total", 1)
-    frappe.db.set_value("Currency", "AED", "symbol", "AED")
-
-
-def seed_catalog():
-    """Example services/parts from the garage brief. Prices are left at 0 for the garage to fill in."""
-    company = _company()
-    if not company:
-        return
-    abbr = frappe.db.get_value("Company", company, "abbr")
-    tax = f"UAE VAT 5% - {abbr}"
-    base = {"company": company}
-    for name in SERVICES:
-        _make_item(name, "Services", False, tax, company, abbr)
-    for name in PARTS:
-        _make_item(name, "Spare Parts", True, tax, company, abbr)
-
-
-def _make_item(name, group, is_stock, tax, company, abbr):
-    if frappe.db.exists("Item", name):
-        return
-    doc = frappe.get_doc({
-        "doctype": "Item", "item_code": name, "item_name": name, "item_group": group,
-        "stock_uom": "Nos", "is_stock_item": 1 if is_stock else 0, "is_sales_item": 1, "is_purchase_item": 1 if is_stock else 0,
-        "maintain_stock": 1 if is_stock else 0,
-    })
-    if is_stock:
-        doc.append("item_defaults", {"company": company, "default_warehouse": f"Stores - {abbr}"})
-    if frappe.db.exists("Item Tax Template", tax):
-        doc.append("taxes", {"item_tax_template": tax})
-    doc.insert(ignore_permissions=True)
-
-
-def configure_search():
-    """Make vehicles, jobs, check-ins and inspections findable from the global search bar."""
-    gs = frappe.get_single("Global Search Settings")
-    have = {r.document_type for r in gs.allowed_in_global_search}
-    for dt in ("Garage Vehicle", "Repair Job", "Vehicle Check-In", "Vehicle Inspection"):
-        if dt not in have:
-            gs.append("allowed_in_global_search", {"document_type": dt})
-    gs.save(ignore_permissions=True)
-    from frappe.custom.doctype.property_setter.property_setter import make_property_setter
-    # find customers by phone number in link fields and list search
-    make_property_setter("Customer", None, "search_fields", "customer_name,customer_group,territory,mobile_no", "Data", for_doctype=True, validate_fields_for_doctype=False)
-
-
-# ERPNext areas a small garage does not need: hidden from the menus (nothing is uninstalled).
-HIDE_WORKSPACES = ["Manufacturing", "Projects", "Assets", "Quality", "Support", "CRM", "Website", "Subcontracting",
-                   "Payroll", "HR", "Home"]
-
-
-def simplify_for_small_garage():
-    # log in straight to the Garage page instead of the app launcher
-    frappe.db.set_single_value("System Settings", "default_app", "garage_management")
-    for name in HIDE_WORKSPACES:
-        if frappe.db.exists("Workspace", name):
-            frappe.db.set_value("Workspace", name, "is_hidden", 1)
-        if frappe.db.exists("Desktop Icon", name):
-            frappe.db.set_value("Desktop Icon", name, "hidden", 1)
 
 
 def create_role_profiles():
@@ -179,9 +51,15 @@ def create_role_profiles():
         doc.save(ignore_permissions=True)
 
 
-def refresh_ui():
-    """Light-weight: rebuild the Home page / menu only (used at start-up of the free demo, which skips the full migrate)."""
-    from garage_management.setup import dashboard
-    dashboard.create()  # also (re)imports the menu file
-    frappe.db.commit()
-    frappe.clear_cache()
+def configure_search():
+    """Job cards, quotations, invoices and statements are findable from the search bar; customers by phone."""
+    from frappe.custom.doctype.property_setter.property_setter import make_property_setter
+    gs = frappe.get_single("Global Search Settings")
+    gs.set("allowed_in_global_search", [r for r in gs.allowed_in_global_search if frappe.db.exists("DocType", r.document_type)])
+    have = {r.document_type for r in gs.allowed_in_global_search}
+    for dt in ("Service Job Card", "Customer Statement"):
+        if dt not in have:
+            gs.append("allowed_in_global_search", {"document_type": dt})
+    gs.save(ignore_permissions=True)
+    make_property_setter("Customer", None, "search_fields", "customer_name,customer_group,territory,mobile_no", "Data",
+                         for_doctype=True, validate_fields_for_doctype=False)
