@@ -1,20 +1,18 @@
-// Big, obvious Print / PDF / Email buttons on every garage document.
+// Print / PDF / Email buttons on every document, and the one-step "Receive Payment" box.
 const GARAGE_PRINT = {
-	"Quotation": "Garage Quotation",
-	"Sales Invoice": "Garage Tax Invoice",
-	"Payment Entry": "Garage Payment Receipt",
-	"Repair Job": "Garage Job Card",
-	"Vehicle Check-In": "Garage Vehicle Check-In",
-	"Vehicle Inspection": "Garage Vehicle Inspection",
+	"Quotation": "Quotation Print",
+	"Sales Invoice": "Tax Invoice Print",
+	"Service Job Card": "Job Card Print",
+	"Customer Statement": "Statement Print",
+	"Payment Entry": "Receipt Print",
 };
 
 Object.entries(GARAGE_PRINT).forEach(([doctype, format]) => {
 	frappe.ui.form.on(doctype, {
 		refresh(frm) {
 			if (frm.is_new() || frm.doc.docstatus === 2) return;
-			const base = "/api/method/frappe.utils.print_format.download_pdf";
-			const pdf = `${base}?doctype=${encodeURIComponent(doctype)}&name=${encodeURIComponent(frm.doc.name)}`
-				+ `&format=${encodeURIComponent(format)}&no_letterhead=0`;
+			const pdf = `/api/method/frappe.utils.print_format.download_pdf?doctype=${encodeURIComponent(doctype)}`
+				+ `&name=${encodeURIComponent(frm.doc.name)}&format=${encodeURIComponent(format)}&no_letterhead=0`;
 			frm.add_custom_button(__("Print"), () => frm.print_doc()).addClass("btn-primary");
 			frm.add_custom_button(__("Download PDF"), () => window.open(pdf, "_blank"));
 			frm.add_custom_button(__("Email"), () => frm.email_doc());
@@ -22,69 +20,57 @@ Object.entries(GARAGE_PRINT).forEach(([doctype, format]) => {
 	});
 });
 
-// One-step payment dialog (used on the invoice and on the repair job).
-window.garage_receive_payment = function (invoice, outstanding, after) {
+// opts: { company?, customer, invoice?, after? }  - pays this customer's oldest unpaid invoices first (or just `invoice`).
+window.garage_receive_payment = function (opts) {
 	const d = new frappe.ui.Dialog({
 		title: __("Receive Payment"),
 		fields: [
-			{ fieldname: "amount", fieldtype: "Currency", label: __("Amount"), reqd: 1, default: outstanding },
-			{ fieldname: "mode", fieldtype: "Select", label: __("Paid by"), reqd: 1, options: "Cash\nCard\nBank Transfer\nOther", default: "Cash" },
-			{ fieldname: "reference", fieldtype: "Data", label: __("Reference (card slip / transfer no, optional)") },
+			{ fieldname: "company", fieldtype: "Link", options: "Company", label: __("Business"), reqd: 1, default: opts.company, read_only: opts.company ? 1 : 0,
+				onchange() { refresh_due(); } },
+			{ fieldname: "due", fieldtype: "Currency", label: __("Customer owes"), read_only: 1 },
+			{ fieldname: "amount", fieldtype: "Currency", label: __("Amount received"), reqd: 1 },
+			{ fieldname: "mode", fieldtype: "Select", label: __("Paid by"), reqd: 1, options: "Cash\nCard\nBank Transfer\nCheque\nOther", default: "Cash" },
+			{ fieldname: "date", fieldtype: "Date", label: __("Date"), default: frappe.datetime.get_today() },
+			{ fieldname: "reference", fieldtype: "Data", label: __("Reference (cheque / transfer no, optional)") },
 		],
 		primary_action_label: __("Save Payment"),
 		primary_action(v) {
 			frappe.call({
-				method: "garage_management.api.payments.receive_payment",
-				args: { invoice, amount: v.amount, mode_of_payment: v.mode, reference_no: v.reference },
-				freeze: true,
+				method: "garage_management.api.payments.receive_customer_payment", freeze: true,
+				args: { company: v.company, customer: opts.customer, amount: v.amount, mode_of_payment: v.mode, reference_no: v.reference,
+					posting_date: v.date, invoice: opts.invoice },
 			}).then((r) => {
 				d.hide();
-				after && after(r.message);
-				frappe.confirm(__("Payment saved. Print the receipt?"), () =>
-					window.open(`/printview?doctype=Payment%20Entry&name=${encodeURIComponent(r.message.payment_entry)}`
-						+ `&format=Garage%20Payment%20Receipt&no_letterhead=0`, "_blank"));
+				const left = r.message.balance_due;
+				frappe.show_alert({ message: __("Payment saved. Balance still due: {0}", [format_currency(left)]), indicator: "green" }, 8);
+				opts.after && opts.after(r.message);
 			});
 		},
 	});
+	const refresh_due = () => {
+		const company = d.get_value("company");
+		if (!company) return;
+		frappe.call({ method: "garage_management.api.payments.get_due", args: { company, customer: opts.customer, invoice: opts.invoice } })
+			.then((r) => { d.set_value("due", r.message); if (!d.get_value("amount")) d.set_value("amount", r.message); });
+	};
 	d.show();
+	refresh_due();
 };
 
 frappe.ui.form.on("Sales Invoice", {
 	refresh(frm) {
 		if (frm.doc.docstatus !== 1 || !(frm.doc.outstanding_amount > 0)) return;
-		const btn = frm.add_custom_button(__("Receive Payment"), () =>
-			window.garage_receive_payment(frm.doc.name, frm.doc.outstanding_amount, () => frm.reload_doc()));
-		btn.removeClass("btn-default").addClass("btn-success");
+		frm.add_custom_button(__("Receive Payment"), () => window.garage_receive_payment({
+			company: frm.doc.company, customer: frm.doc.customer, invoice: frm.doc.name, after: () => frm.reload_doc() }))
+			.removeClass("btn-default").addClass("btn-success");
 	},
 });
 
-// Customer approves / rejects the quotation (used by the repair job's big button).
-window.garage_customer_decision = function (quotation, after) {
-	const d = new frappe.ui.Dialog({
-		title: __("Customer Decision"),
-		fields: [
-			{ fieldname: "decision", fieldtype: "Select", label: __("The customer"), options: "Customer Approved\nCustomer Rejected", default: "Customer Approved", reqd: 1 },
-			{ fieldname: "approved_by", fieldtype: "Data", label: __("Name of the person who decided"), reqd: 1 },
-			{ fieldname: "comments", fieldtype: "Small Text", label: __("Comments (optional)") },
-		],
-		primary_action_label: __("Save"),
-		primary_action(v) {
-			frappe.call({ method: "garage_management.api.repair_job.record_approval", freeze: true,
-				args: { quotation, decision: v.decision, approved_by: v.approved_by, comments: v.comments } })
-				.then(() => { d.hide(); after && after(); });
-		},
-	});
-	d.show();
-};
-
-// WhatsApp click-to-chat: opens WhatsApp with the customer's number and a ready-typed message (templates live in Garage Settings).
-[["Repair Job", "ready"], ["Quotation", "quotation"]].forEach(([doctype, kind]) => {
-	frappe.ui.form.on(doctype, {
-		refresh(frm) {
-			if (frm.is_new() || frm.doc.docstatus === 2) return;
-			frm.add_custom_button(__("WhatsApp"), () =>
-				frappe.call({ method: "garage_management.api.messages.whatsapp_link", args: { doctype, name: frm.doc.name, kind } })
-					.then((r) => window.open(r.message, "_blank"))).addClass("btn-success");
-		},
-	});
+frappe.ui.form.on("Customer", {
+	refresh(frm) {
+		if (frm.is_new()) return;
+		frm.add_custom_button(__("Receive Payment"), () => window.garage_receive_payment({ customer: frm.doc.name, after: () => frm.reload_doc() }))
+			.removeClass("btn-default").addClass("btn-success");
+		frm.add_custom_button(__("New Statement"), () => frappe.new_doc("Customer Statement", { customer: frm.doc.name }));
+	},
 });

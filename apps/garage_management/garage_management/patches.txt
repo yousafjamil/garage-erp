@@ -1,4 +1,5 @@
 [pre_model_sync]
 garage_management.patches.v1_0.create_roles
+garage_management.patches.v2_0.cleanup_v1
 
 [post_model_sync]

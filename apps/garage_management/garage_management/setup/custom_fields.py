@@ -1,45 +1,35 @@
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
-GARAGE_LINK_FIELDS = lambda after: [
-    dict(fieldname="garage_section", label="Garage", fieldtype="Section Break", insert_after=after, collapsible=0),
-    dict(fieldname="vehicle", label="Vehicle", fieldtype="Link", options="Garage Vehicle", insert_after="garage_section",
-         in_standard_filter=1, search_index=1),
-    dict(fieldname="plate_number", label="Plate No", fieldtype="Data", fetch_from="vehicle.plate_number",
-         read_only=1, insert_after="vehicle", in_global_search=1, allow_on_submit=1, in_list_view=1),
-    dict(fieldname="garage_cb", fieldtype="Column Break", insert_after="plate_number"),
-    dict(fieldname="repair_job", label="Repair Job", fieldtype="Link", options="Repair Job", read_only=1,
-         insert_after="garage_cb", search_index=1, no_copy=0),
-]
-
-APPROVAL_FIELDS = [
-    dict(fieldname="approval_section", label="Customer Approval", fieldtype="Section Break", insert_after="repair_job"),
-    dict(fieldname="approval_status", label="Approval Status", fieldtype="Select",
-         options="Pending\nCustomer Approved\nCustomer Rejected", default="Pending", read_only=1,
-         allow_on_submit=1, in_standard_filter=1, no_copy=1, insert_after="approval_section", in_list_view=1),
-    dict(fieldname="approval_date", label="Approval Date", fieldtype="Date", read_only=1, allow_on_submit=1,
-         no_copy=1, insert_after="approval_status"),
-    dict(fieldname="approval_cb", fieldtype="Column Break", insert_after="approval_date"),
-    dict(fieldname="approved_by", label="Approved By", fieldtype="Data", read_only=1, allow_on_submit=1,
-         no_copy=1, insert_after="approval_cb"),
-    dict(fieldname="approved_amount", label="Approved Amount", fieldtype="Currency", read_only=1,
-         allow_on_submit=1, no_copy=1, insert_after="approved_by"),
-    dict(fieldname="customer_comments", label="Customer Comments", fieldtype="Small Text", read_only=1,
-         allow_on_submit=1, no_copy=1, insert_after="approved_amount"),
-]
-
-
-CUSTOMER_FIELDS = [
-    dict(fieldname="garage_phone", label="Mobile / Phone", fieldtype="Data", options="Phone", insert_after="customer_type",
-         description="Used to find the customer by phone number.", in_list_view=1),
-    dict(fieldname="garage_email", label="Email", fieldtype="Data", options="Email", insert_after="garage_phone"),
+DOC_FIELDS = lambda after: [
+    dict(fieldname="vehicle_no", label="Vehicle / Reference", fieldtype="Data", insert_after=after, in_list_view=1,
+         in_global_search=1, allow_on_submit=1, description="Shown after the customer name, e.g. 76191 - Pickup, or the trailer / route"),
+    dict(fieldname="job_card", label="Job Card", fieldtype="Link", options="Service Job Card", read_only=1, insert_after="vehicle_no"),
+    dict(fieldname="doc_note", label="Note (printed on the document)", fieldtype="Small Text", allow_on_submit=1,
+         insert_after="job_card"),
 ]
 
 
 def create():
-    fields = {
-        "Customer": CUSTOMER_FIELDS,
-        "Quotation": GARAGE_LINK_FIELDS("order_type") + APPROVAL_FIELDS,
-        "Sales Order": GARAGE_LINK_FIELDS("order_type"),
-        "Sales Invoice": GARAGE_LINK_FIELDS("posting_time"),
-    }
-    create_custom_fields(fields, update=True)
+    create_custom_fields({
+        "Quotation": DOC_FIELDS("party_name"),
+        "Sales Invoice": DOC_FIELDS("customer_name") + [
+            dict(fieldname="lpo_ref", label="LPO Ref No", fieldtype="Data", insert_after="doc_note", allow_on_submit=1)],
+        "Customer": [
+            dict(fieldname="garage_phone", label="Mobile / Phone", fieldtype="Data", options="Phone", insert_after="customer_type",
+                 description="Used to find the customer by phone number.", in_list_view=1),
+            dict(fieldname="garage_email", label="Email", fieldtype="Data", options="Email", insert_after="garage_phone"),
+            dict(fieldname="doc_address", label="Address (printed on documents)", fieldtype="Data", insert_after="garage_email",
+                 description="e.g. Abu Dhabi UAE"),
+        ],
+        "Company": [
+            dict(fieldname="print_style", label="Document Style", fieldtype="Select", options="Garage\nTransport", default="Garage",
+                 insert_after="company_name", description="Which layout the quotations, invoices and job cards use."),
+            dict(fieldname="arabic_name", label="Name (Arabic)", fieldtype="Data", insert_after="print_style"),
+            dict(fieldname="bank_details", label="Bank / Account Details (printed on invoices)", fieldtype="Small Text",
+                 insert_after="arabic_name"),
+            dict(fieldname="quotation_vat_text", label="Quotation VAT wording", fieldtype="Data", insert_after="bank_details",
+                 default="5 % Vat will be applicable at bill as per UAE Law"),
+            dict(fieldname="quotation_note", label="Quotation note", fieldtype="Small Text", insert_after="quotation_vat_text"),
+            dict(fieldname="invoice_note", label="Invoice note", fieldtype="Small Text", insert_after="quotation_note"),
+        ],
+    }, update=True)

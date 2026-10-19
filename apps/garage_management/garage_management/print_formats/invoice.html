@@ -1,0 +1,47 @@
+{% set rows = doc.items|length %}
+{% set fill = [(10 if style == "Transport" else 270) - rows * 30, 0]|max %}
+{% set vno = doc.vehicle_no %}
+{% set vat = doc.taxes[0] if doc.taxes else None %}
+<div class="doc">
+{% if style == "Transport" %}
+  <table style="margin-top:16px"><tr>
+    <td style="width:62%;padding-right:10px"><table class="grid" style="border:2px solid #222"><tr><td style="border:0;font-size:14px;height:92px">Customer Name:<br><span class="big">{{ doc.customer_name }}</span>{% if vno %}<br><span class="small">{{ vno }}</span>{% endif %}<br><br>{% set addr = frappe.db.get_value("Customer", doc.customer, "doc_address") %}{{ addr or "" }}<br><span>TRN &nbsp;&nbsp;{{ doc.tax_id or "" }}</span></td></tr></table></td>
+    <td style="width:38%"><div class="c big" style="color:#e8672a;text-decoration:underline;font-size:21px">TAX INVOICE</div>
+      <table style="margin-top:6px;font-size:13px;white-space:nowrap"><tr><td>INVOICE NO:</td><td>{{ docno(doc.name) }}</td></tr><tr><td>INV DATE:</td><td>{{ doc.get_formatted("posting_date") }}</td></tr>
+      <tr><td>TRN No:</td><td>{{ co.tax_id }}</td></tr><tr><td>LPO Ref No:</td><td>{{ doc.lpo_ref or "" }}</td></tr></table></td></tr></table>
+  <table class="grid" style="margin-top:14px;border:3px double #222">
+    <tr class="blue"><th style="width:7%">S.No</th><th>Description</th><th style="width:11%">Quantity</th><th style="width:14%">Unit Price</th><th style="width:16%">Total Amount</th></tr>
+    {% for row in doc.items %}<tr class="body"><td class="blue c" style="font-weight:normal">{{ loop.index }}</td><td style="font-weight:normal">{{ row.description or row.item_name }}</td><td class="c" style="font-weight:normal">{{ row.qty|int if row.qty == row.qty|int else row.qty }}</td><td class="r" style="font-weight:normal">{{ money(row.rate) }}</td><td class="blue r" style="font-weight:normal">{{ money(row.amount) }}</td></tr>{% endfor %}
+    <tr class="fill"><td class="blue" style="height:{{ fill }}px"></td><td></td><td></td><td></td><td class="blue"></td></tr>
+  </table>
+  <table style="margin-top:16px"><tr>
+    <td style="width:58%;padding-right:10px"><table class="grid" style="border:2px solid #222"><tr><td style="border:0;font-size:12.5px;line-height:1.55"><span class="u">Account Details</span><br>
+      {% for ln in (co.bank_details or "").split("\n") %}{{ ln }}<br>{% endfor %}</td></tr></table></td>
+    <td style="width:42%"><table class="grid" style="border:2px solid #222;font-size:13px">
+      <tr><td style="font-weight:normal">Sub Total</td><td class="blue r">{{ money(doc.total) }}</td></tr>
+      <tr><td style="font-weight:normal">Discount</td><td class="blue r">{{ money(doc.discount_amount) }}</td></tr>
+      <tr><td style="font-weight:normal">A/F Amount</td><td class="blue r">{{ money(doc.net_total) }}</td></tr>
+      <tr><td style="font-weight:normal">VAT @ {{ (vat.rate|int) if vat else 5 }} %</td><td class="blue r">{{ money(doc.total_taxes_and_charges) }}</td></tr>
+      <tr><td style="font-weight:normal">Net Amount</td><td class="blue r big" style="color:#e8672a">{{ money(doc.grand_total) }}</td></tr></table></td></tr></table>
+  <table class="grid blue" style="margin-top:2px;border:2px solid #222"><tr><td style="width:7%;border:1px solid #222">Total</td><td class="big" style="border:1px solid #222">{{ words(doc.grand_total) }}</td></tr></table>
+  {% set n = doc.doc_note or co.invoice_note %}{% if n %}<div class="note">{{ n }}</div>{% endif %}
+{% else %}
+  <table style="margin-top:20px"><tr><td style="width:34%"></td><td class="c" style="width:32%"><span class="ar" style="font-size:13px">فاتورة ضريبية</span></td>
+    <td class="r" style="width:34%">Date: &nbsp;{{ doc.get_formatted("posting_date") }} &nbsp;<span class="ar">التاريخ:</span></td></tr></table>
+  <div class="c" style="margin-top:4px"><span class="title big">TAX INVOICE</span></div>
+  <table style="margin-top:10px"><tr><td>No: &nbsp;<span class="no big">{{ docno(doc.name) }}</span></td><td class="r big" style="font-size:14px">TRN: {{ co.tax_id }}</td></tr></table>
+  <table class="grid" style="margin-top:3px">
+    <tr><td style="width:6%">To</td><td colspan="2" style="font-size:13.5px">{{ doc.customer_name }}{% if vno %} ( V-No: {{ vno }} ){% endif %}</td><td class="r" style="width:19%;white-space:nowrap"><span class="ar">:السيد / السادة</span></td></tr>
+    <tr><td colspan="4" class="small">Customer TRN No: {{ doc.tax_id or "" }}</td></tr>
+  </table>
+  <table class="grid" style="margin-top:-4px;border-top:0">
+    <tr><th style="width:8%">S.No</th><th>Description</th><th style="width:15%">Amount/Dhs</th><th style="width:9%">Fills</th></tr>
+    {% for row in doc.items %}<tr class="body"><td class="c">{{ loop.index }}</td><td>{{ row.description or row.item_name }}</td><td class="c" style="font-weight:normal">{{ dh(row.amount) }}</td><td class="c" style="font-weight:normal">{{ fl(row.amount) }}</td></tr>{% endfor %}
+    <tr class="fill"><td style="height:{{ fill }}px"></td><td></td><td></td><td></td></tr>
+    <tr class="body"><td></td><td class="r">Gross Total</td><td class="c" style="border-top:1px solid #333">{{ dh(doc.net_total) }}</td><td class="c" style="border-top:1px solid #333">{{ fl(doc.net_total) }}</td></tr>
+    <tr class="body"><td></td><td class="r">VAT {{ (vat.rate|int) if vat else 5 }} %</td><td class="c">{{ dh(doc.total_taxes_and_charges) }}</td><td class="c">{{ fl(doc.total_taxes_and_charges) }}</td></tr>
+    <tr><td class="big">Total</td><td class="big">{{ words(doc.grand_total) }}</td><td class="c big">{{ dh(doc.grand_total) }}</td><td class="c big">{{ fl(doc.grand_total) }}</td></tr>
+  </table>
+  {% set n = doc.doc_note or co.invoice_note %}{% if n %}<div class="note">{{ n }}</div>{% endif %}
+{% endif %}
+</div>

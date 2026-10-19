@@ -1,6 +1,8 @@
 import frappe
 
 OUR_APP = "garage_management"
+APP_NAME = "Candle Auto Repair & Pak Mohmand"
+APP_LOGO = "/assets/garage_management/images/logo.png"
 
 
 def _only_garage(apps):
@@ -13,8 +15,7 @@ def extend_bootinfo(bootinfo):
     if data:
         data["apps"] = _only_garage(data.get("apps"))
         data["is_desk_apps"] = 1
-    name = frappe.db.get_single_value("Garage Settings", "garage_name") or "Garage"
-    logo = frappe.db.get_single_value("Garage Settings", "logo") or "/assets/garage_management/images/logo.png"
+    name, logo = APP_NAME, APP_LOGO
     for app in bootinfo.get("app_data") or []:
         if app.get("app_name") != OUR_APP:
             app["app_title"] = name

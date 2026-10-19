@@ -1,2 +1,2 @@
-/* Simple mode: hide the sidebar's Notification row (Search stays). */
+/* Simple mode: hide the sidebar Notification row (Search stays). */
 .sidebar-notification { display: none !important; }

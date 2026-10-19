@@ -1,0 +1,16 @@
+{% set head = "blue" if style == "Transport" else "" %}
+<div class="doc">
+  <table style="margin-top:20px"><tr><td style="width:34%"></td><td class="c" style="width:32%"><span class="title big">PAYMENT RECEIPT</span> &nbsp;<span class="ar" style="font-size:13px">إيصال دفع</span></td>
+    <td class="r" style="width:34%">Date: &nbsp;{{ doc.get_formatted("posting_date") }} &nbsp;<span class="ar">التاريخ:</span></td></tr></table>
+  <div style="margin-top:6px">No: &nbsp;<span class="no big">{{ doc.name }}</span></div>
+  <table class="grid" style="margin-top:10px;font-size:13.5px">
+    <tr><td style="width:24%">Received from</td><td class="big">{{ doc.party_name }}</td></tr>
+    <tr><td>Amount</td><td class="big">AED {{ money(doc.paid_amount) }} &nbsp;<span style="font-size:12px">({{ words(doc.paid_amount) }})</span></td></tr>
+    <tr><td>Paid by</td><td>{{ doc.mode_of_payment or "" }}{% if doc.reference_no %} &nbsp;-&nbsp; {{ doc.reference_no }}{% endif %}</td></tr>
+  </table>
+  {% if doc.references %}
+  <table class="grid" style="margin-top:12px">
+    <tr class="{{ head }}"><th style="width:8%">S.No</th><th>Against invoice</th><th style="width:20%">Invoice amount</th><th style="width:20%">Paid now</th></tr>
+    {% for r in doc.references %}<tr><td class="c">{{ loop.index }}</td><td style="font-weight:normal">{{ docno(r.reference_name) }}</td><td class="r" style="font-weight:normal">{{ money(r.total_amount) }}</td><td class="r" style="font-weight:normal">{{ money(r.allocated_amount) }}</td></tr>{% endfor %}
+  </table>{% endif %}
+</div>

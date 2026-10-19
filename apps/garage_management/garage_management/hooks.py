@@ -275,53 +275,27 @@ after_migrate = "garage_management.setup.install.setup_all"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
-
-
 # Garage hooks
-permission_query_conditions = {
-    "Repair Job": "garage_management.garage_management.doctype.repair_job.repair_job.get_permission_query_conditions",
+override_doctype_dashboards = {}
+doc_events = {
+    "Customer": {"on_update": "garage_management.api.customer.sync_contact"},
+    "Quotation": {"before_naming": "garage_management.api.documents.before_naming",
+                  "before_validate": "garage_management.api.documents.free_text_lines"},
+    "Sales Invoice": {"before_naming": "garage_management.api.documents.before_naming",
+                      "before_validate": "garage_management.api.documents.invoice_defaults"},
 }
-has_permission = {
-    "Repair Job": "garage_management.garage_management.doctype.repair_job.repair_job.has_permission",
-}
-override_doctype_dashboards = {
-    "Customer": "garage_management.api.dashboards.customer_dashboard",
-}
-global_search_doctypes = {
-    "Default": [
-        {"doctype": "Garage Vehicle", "index": 0},
-        {"doctype": "Repair Job", "index": 1},
-        {"doctype": "Vehicle Check-In", "index": 2},
-        {"doctype": "Vehicle Inspection", "index": 3},
-    ]
-}
-doctype_js = {
-    "Quotation": "public/js/quotation.js",
-}
-app_include_js = ["/assets/garage_management/js/garage_vehicle_filter.js", "/assets/garage_management/js/garage_actions.js", "/assets/garage_management/js/simple_forms.js"]
-
+global_search_doctypes = {"Default": [{"doctype": "Service Job Card", "index": 0}, {"doctype": "Customer Statement", "index": 1}]}
 scheduler_events = {
-    "daily": ["garage_management.api.dashboard.low_stock_alert", "garage_management.api.reminders.daily_vehicle_reminders"],
-    # new customers / vehicles / jobs become searchable within a minute (ERPNext's default is 15 minutes)
+    # new customers / documents become searchable within a minute (ERPNext's default is 15 minutes)
     "cron": {"* * * * *": ["frappe.utils.global_search.sync_global_search"]},
 }
-
-# Appears on the app launcher; also the system default app so users land straight on the Garage page.
+app_include_js = ["/assets/garage_management/js/garage_actions.js", "/assets/garage_management/js/simple_forms.js"]
+app_include_css = "/assets/garage_management/css/garage.css"
 add_to_apps_screen = [
-    {
-        "name": "garage_management",
-        "logo": "/assets/garage_management/images/logo.png",
-        "title": "Garage",
-        "route": "/desk/garage-management/garage",
-        "setup_wizard_text": "Let's set up your garage.",
-    }
+    {"name": "garage_management", "logo": "/assets/garage_management/images/logo.png", "title": "Business Manager",
+     "route": "/desk/garage-management/garage", "setup_wizard_text": "Let's set up your businesses."}
 ]
-
 get_website_user_home_page = "garage_management.api.home.get_home"
-
 extend_bootinfo = ["garage_management.api.whitelabel.extend_bootinfo"]
 override_whitelisted_methods = {"frappe.apps.get_apps": "garage_management.api.whitelabel.get_apps"}
 email_brand_image = "assets/garage_management/images/logo.png"
-
-doc_events = {"Customer": {"on_update": "garage_management.api.customer.sync_contact"}}
-app_include_css = "/assets/garage_management/css/garage.css"

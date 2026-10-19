@@ -1,0 +1,30 @@
+{% set co = frappe.get_cached_doc("Company", doc.company) %}
+{% set style = co.print_style or "Garage" %}
+{% set lh = frappe.db.get_value("Letter Head", co.default_letter_head, ["content", "footer"], as_dict=True) or {} %}
+{% macro dh(x) %}{{ "{:,}".format((x or 0)|float|int) }}{% endmacro %}
+{% macro fl(x) %}{% set f = ((((x or 0)|float) * 100)|round|int) % 100 %}{% if f %}{{ "%02d"|format(f) }}{% else %}0{% endif %}{% endmacro %}
+{% macro money(x) %}{{ "{:,.2f}".format((x or 0)|float) }}{% endmacro %}
+{% macro words(x) %}{{ frappe.utils.money_in_words(x or 0, "AED")|replace("AED ", "")|replace(" only.", " Only")|replace(" only", " Only")|replace(",", "")|replace(" And ", " and ") }}{% endmacro %}
+{% macro docno(n) %}{{ (n|replace("PQTN", "QTN")|replace("PINV", "INV")).rsplit("-", 1)|join("/") }}{% endmacro %}
+<style>
+/* left/right 0 = edge-to-edge letterhead; top/bottom page margins are set on the Print Format record (a CSS margin here would be counted twice) */
+.print-format { margin-left: 0mm; margin-right: 0mm; }
+.lh img { width: 100%; display: block; }
+.doc { font-family: "Times New Roman", "Liberation Serif", "DejaVu Serif", serif; font-weight: bold; font-size: 13px; color: #111; padding: 0 11mm; }
+.doc table { width: 100%; border-collapse: collapse; }
+.doc td, .doc th { vertical-align: top; }
+.doc .ar { font-family: "DejaVu Sans", Arial, sans-serif; direction: rtl; font-weight: bold; }
+.doc .c { text-align: center; } .doc .r { text-align: right; } .doc .u { text-decoration: underline; }
+.doc .no { color: {{ "#e8672a" if style == "Transport" else "#e0526b" }}; }
+.doc .title { font-size: 15px; text-decoration: underline; text-align: center; letter-spacing: .3px; }
+.doc .grid { border: 4px double #333; }
+.doc .grid td, .doc .grid th { border: 1px solid #333; padding: 2px 7px; }
+.doc .grid th { font-size: 14px; text-decoration: underline; color: #111; font-weight: bold; }
+.doc .fill td { border-top: 0; border-bottom: 0; }
+.doc .body td { border-top: 0; border-bottom: 0; }
+.doc .big { font-size: 15px; }
+.doc .blue, .doc tr.blue td, .doc tr.blue th { background: #74c6de; }
+.doc .small { font-size: 11.5px; }
+.doc .note { margin-top: 6px; font-size: 12px; }
+</style>
+<div class="lh">{{ lh.content }}</div>

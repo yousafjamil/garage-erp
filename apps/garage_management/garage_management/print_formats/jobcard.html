@@ -1,0 +1,20 @@
+{% set rows = doc.lines|length %}
+{% set fill = [210 - rows * 30, 0]|max %}
+{% set head = "blue" if style == "Transport" else "" %}
+<div class="doc">
+  <table style="margin-top:20px"><tr><td style="width:34%"></td><td class="c" style="width:32%"><span class="title big">JOB CARD</span> &nbsp;<span class="ar" style="font-size:13px">بطاقة عمل</span></td>
+    <td class="r" style="width:34%">Date: &nbsp;{{ doc.get_formatted("job_date") }} &nbsp;<span class="ar">التاريخ:</span></td></tr></table>
+  <div style="margin-top:6px">No: &nbsp;<span class="no big">{{ doc.name }}</span></div>
+  <table class="grid" style="margin-top:8px;font-size:13px">
+    <tr><td style="width:22%">Customer</td><td colspan="3" class="big">{{ doc.customer_name }}</td></tr>
+    <tr><td>Vehicle / Reference</td><td style="width:34%">{{ doc.vehicle_no or "" }}</td><td style="width:20%">Technician / Driver</td><td>{{ doc.staff or "" }}</td></tr>
+    <tr><td style="height:80px">Work required</td><td colspan="3" style="font-weight:normal;white-space:pre-line">{{ doc.details or "" }}</td></tr>
+  </table>
+  <table class="grid" style="margin-top:10px">
+    <tr class="{{ head }}"><th style="width:8%">S.No</th><th>Description of work</th><th style="width:10%">Qty</th><th style="width:16%">Amount (AED)</th></tr>
+    {% for row in doc.lines %}<tr class="body"><td class="c">{{ loop.index }}</td><td style="font-weight:normal">{{ row.description }}</td><td class="c" style="font-weight:normal">{{ row.qty|int if row.qty == row.qty|int else row.qty }}</td><td class="r" style="font-weight:normal">{{ money(row.amount) }}</td></tr>{% endfor %}
+    <tr class="fill"><td style="height:{{ fill }}px"></td><td></td><td></td><td></td></tr>
+    <tr class="{{ head }}"><td></td><td class="r big">Total (excluding VAT)</td><td></td><td class="r big">{{ money(doc.total) }}</td></tr>
+  </table>
+  {% if doc.notes %}<div class="note" style="font-weight:normal">Notes: {{ doc.notes }}</div>{% endif %}
+</div>
