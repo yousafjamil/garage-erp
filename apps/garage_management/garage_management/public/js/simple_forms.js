@@ -3,16 +3,16 @@
 const GARAGE_SIMPLE = {
 	"Quotation": {
 		tabs: ["Address & Contact", "Terms", "More Info"],
-		sections: ["Currency and Price List", "Pricing Rules", "Bundle Items", "Tax Breakup", "Taxes and Charges"],
+		sections: ["Currency and Price List", "Pricing Rules", "Bundle Items", "Tax Breakup", "Taxes and Charges", "Sales Taxes and Charges"],
 		fields: ["naming_series", "order_type", "quotation_to", "scan_barcode", "tax_category", "shipping_rule", "incoterm", "named_place",
-			"valid_till", "apply_discount_on", "coupon_code"],
+			"valid_till", "apply_discount_on", "coupon_code", "taxes", "taxes_and_charges", "total_taxes_and_charges", "base_total_taxes_and_charges", "rounding_adjustment", "rounded_total", "disable_rounded_total"],
 	},
 	"Sales Invoice": {
 		tabs: ["Payments", "Address & Contact", "Terms", "More Info"],
 		sections: ["Currency and Price List", "Totals (Company Currency)", "Tax Withholding Entry", "Tax Breakup", "Pricing Rules",
 			"Packing List", "Time Sheet List"],
 		fields: ["naming_series", "is_pos", "is_return", "is_debit_note", "scan_barcode", "set_posting_time", "update_stock", "cost_center",
-			"project", "campaign", "apply_tds", "posting_time", "tax_category", "shipping_rule", "incoterm", "named_place", "due_date"],
+			"project", "campaign", "rounding_adjustment", "rounded_total", "disable_rounded_total", "apply_tds", "posting_time", "tax_category", "shipping_rule", "incoterm", "named_place", "due_date"],
 	},
 	"Customer": {
 		tabs: ["Accounting", "Settings", "Sales Team", "Portal Users", "More Info"],
