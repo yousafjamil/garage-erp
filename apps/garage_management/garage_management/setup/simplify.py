@@ -9,6 +9,8 @@ HIDE_WORKSPACES = ["Manufacturing", "Projects", "Assets", "Quality", "Support", 
 CHANGES = [
     # lines are plain descriptions: no item code / unit of measure / stock columns
     *[(dt, "item_code", p, v) for dt in ("Quotation Item", "Sales Invoice Item") for p, v in (("in_list_view", 0), ("reqd", 0))],
+    *[(dt, f, "reqd", 0) for dt in ("Quotation Item", "Sales Invoice Item") for f in ("item_name", "uom", "conversion_factor")],
+    *[(dt, "qty", "default", "1") for dt in ("Quotation Item", "Sales Invoice Item")],
     *[(dt, "description", "in_list_view", 1) for dt in ("Quotation Item", "Sales Invoice Item")],
     *[(dt, f, "in_list_view", 0) for dt in ("Quotation Item", "Sales Invoice Item") for f in ("item_name", "uom", "warehouse")],
     # lists
