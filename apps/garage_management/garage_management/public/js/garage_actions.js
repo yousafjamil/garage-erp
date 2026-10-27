@@ -14,7 +14,9 @@ Object.entries(GARAGE_PRINT).forEach(([doctype, format]) => {
 			const pdf = `/api/method/frappe.utils.print_format.download_pdf?doctype=${encodeURIComponent(doctype)}`
 				+ `&name=${encodeURIComponent(frm.doc.name)}&format=${encodeURIComponent(format)}&no_letterhead=0`;
 			frm.add_custom_button(__("Print"), () => frm.print_doc()).addClass("btn-primary");
-			frm.add_custom_button(__("Download PDF"), () => window.open(pdf, "_blank"));
+			// the download endpoint ignores the format's own setting unless told, so pass it (Chrome normally; the free 512 MB demo uses wkhtmltopdf)
+			frm.add_custom_button(__("Download PDF"), () => frappe.db.get_value("Print Format", format, "pdf_generator").then((r) =>
+				window.open(pdf + "&pdf_generator=" + ((r.message && r.message.pdf_generator) || "wkhtmltopdf"), "_blank")));
 			frm.add_custom_button(__("Email"), () => frm.email_doc());
 		},
 	});

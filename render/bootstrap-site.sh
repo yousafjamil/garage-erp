@@ -17,7 +17,7 @@ URL="${RENDER_EXTERNAL_URL:-http://localhost:${PORT:-10000}}"
 [ "${DEMO_SEED:-0}" = "1" ] && URL="http://127.0.0.1:${PORT:-10000}"
 cat > "$BENCH/sites/common_site_config.json" <<JSON
 {"db_host":"127.0.0.1","db_port":3306,"redis_cache":"redis://127.0.0.1:6379","redis_queue":"redis://127.0.0.1:6380",
- "redis_socketio":"redis://127.0.0.1:6380","socketio_port":9000,"default_site":"$SITE","host_name":"$URL"}
+ "redis_socketio":"redis://127.0.0.1:6380","socketio_port":9000,"chromium_path":"/usr/bin/chromium-headless-shell","default_site":"$SITE","host_name":"$URL"}
 JSON
 # DEMO_SEED=1: restore the ready-made demo database baked into the image (about 1 MB) instead of running the heavy first-time install.
 # Used for the free 512 MB tier, where the install itself would be killed for lack of memory. Data is NOT kept across restarts there.

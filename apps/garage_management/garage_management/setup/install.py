@@ -1,4 +1,6 @@
 """Idempotent configuration. Runs on install and on every migrate."""
+import os
+
 import frappe
 
 ROLES = ["Garage Owner", "Garage Manager", "Receptionist", "Technician"]
@@ -70,5 +72,7 @@ def refresh_ui():
     from garage_management.setup import dashboard, print_formats
     print_formats.create()  # the demo database was baked earlier: bring the documents up to date
     dashboard.create()  # also (re)imports the menu file
+    if os.environ.get("LITE") == "1":
+        print_formats.use_light_pdf_engine()
     frappe.db.commit()
     frappe.clear_cache()

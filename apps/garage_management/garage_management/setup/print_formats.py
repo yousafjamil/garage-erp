@@ -23,7 +23,15 @@ def create():
         if doc.is_new():
             doc.name = name
         doc.update({"doc_type": doctype, "print_format_type": "Jinja", "custom_format": 1, "html": html, "standard": "No",
-                    "disabled": 0, "margin_top": 8, "margin_bottom": 64, "margin_left": 0, "margin_right": 0,
-                    "module": "Garage Management", "default_print_language": "en"})
+                    "disabled": 0, "margin_top": 0, "margin_bottom": 64, "margin_left": 0, "margin_right": 0,
+                    "module": "Garage Management", "default_print_language": "en", "pdf_generator": "chrome"})
         doc.save(ignore_permissions=True)
         make_property_setter(doctype, None, "default_print_format", name, "Data", for_doctype=True, validate_fields_for_doctype=False)
+
+
+def use_light_pdf_engine():
+    """The free 512 MB demo cannot keep Chrome running (it stalls after two or three PDFs): use wkhtmltopdf there, with the small top margin it needs."""
+    for name, *_ in FORMATS:
+        frappe.db.set_value("Print Format", name, {"pdf_generator": "wkhtmltopdf", "margin_top": 8})
+    frappe.db.commit()
+    frappe.clear_cache()

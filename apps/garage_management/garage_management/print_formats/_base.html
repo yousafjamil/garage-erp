@@ -27,4 +27,4 @@
 .doc .small { font-size: 11.5px; }
 .doc .note { margin-top: 6px; font-size: 12px; }
 </style>
-<div class="lh">{{ lh.content }}</div>
+{% if (frappe.form_dict.get("pdf_generator") or "") == "chrome" %}<div id="header-html" class="visible-pdf"><div class="lh">{{ lh.content }}</div></div>{% else %}<div class="lh">{{ lh.content }}</div>{% endif %}
