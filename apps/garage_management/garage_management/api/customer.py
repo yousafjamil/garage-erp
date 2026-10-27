@@ -25,3 +25,30 @@ def sync_contact(doc, method=None):
     from frappe.utils.global_search import sync_global_search, update_global_search
     update_global_search(doc)  # the search index was built before the phone was filed
     sync_global_search()  # make it searchable now instead of at the next 15-minute flush
+
+
+@frappe.whitelist()
+def get_details(customer):
+    """Everything about one customer on one screen: contact data, what each business has quoted/invoiced/received, what is still owed,
+    and the latest documents (the 'Details' button on the Customers list)."""
+    from frappe.utils import flt
+
+    if not frappe.has_permission("Customer", "read", customer):
+        frappe.throw("You do not have permission to view this customer.", frappe.PermissionError)
+    c = frappe.db.get_value("Customer", customer, ["name", "customer_name", "tax_id", "doc_address", "garage_phone", "garage_email"], as_dict=True)
+    companies = []
+    for co in frappe.get_all("Company", pluck="name"):
+        invs = frappe.get_all("Sales Invoice", filters={"company": co, "customer": customer, "docstatus": 1, "is_return": 0}, fields=["grand_total", "outstanding_amount"])
+        qts = frappe.get_all("Quotation", filters={"company": co, "party_name": customer, "docstatus": ["<", 2]}, fields=["grand_total"])
+        inv = frappe._dict(n=len(invs), total=sum(flt(i.grand_total) for i in invs), owed=sum(flt(i.outstanding_amount) for i in invs))
+        qt = frappe._dict(n=len(qts), total=sum(flt(q.grand_total) for q in qts))
+        if not (inv.n or qt.n):
+            continue
+        companies.append({"company": co, "quotations": qt.n, "quoted": flt(qt.total), "invoices": inv.n, "invoiced": flt(inv.total),
+                          "paid": flt(inv.total) - flt(inv.owed), "owes": flt(inv.owed)})
+    recent = []
+    for dt, party in (("Quotation", "party_name"), ("Sales Invoice", "customer")):
+        for d in frappe.get_all(dt, filters={party: customer, "docstatus": ["<", 2]}, fields=["name", "company", "grand_total", "creation", "docstatus"], limit=6, order_by="creation desc"):
+            recent.append({"doctype": dt, **d})
+    recent.sort(key=lambda x: x["creation"], reverse=True)
+    return {"customer": c, "companies": companies, "recent": [{**r, "creation": str(r["creation"])} for r in recent[:8]]}

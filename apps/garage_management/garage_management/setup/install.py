@@ -67,7 +67,8 @@ def configure_search():
 
 def refresh_ui():
     """Light-weight: rebuild the Home page / menu only (used at start-up of the free demo, which skips the full migrate)."""
-    from garage_management.setup import dashboard
+    from garage_management.setup import dashboard, print_formats
+    print_formats.create()  # the demo database was baked earlier: bring the documents up to date
     dashboard.create()  # also (re)imports the menu file
     frappe.db.commit()
     frappe.clear_cache()

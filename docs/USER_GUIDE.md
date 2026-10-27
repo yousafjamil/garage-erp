@@ -6,7 +6,7 @@ Each business has its own numbering, VAT wording, bank details and letterhead.
 
 ## Daily work
 1. **Job Card** (optional) — *Job Cards → New*: company, customer, vehicle no., staff, details and lines. Buttons: **Create Quotation**, **Create Invoice**, **Mark Completed**.
-2. **Quotation** — *Quotations → New*. Pick company and customer, type the lines (description, qty, rate), vehicle / reference and a note if needed. No VAT is added; the company's VAT wording is printed. **Print** or **Download PDF** or **Email**.
+2. **Quotation** — *Quotations → New*. Pick company and customer, type the lines (description, qty, rate), vehicle / reference and a note if needed. No VAT is added; the company's VAT wording is printed. The quotation also shows both TRNs and, when the company has bank details saved (Company → Bank Details), the bank account box. **Print** or **Download PDF** or **Email**.
 3. **Tax Invoice** — *Invoices → New* (or from a job card). VAT 5 % is added automatically. Add the LPO reference if the customer gave one. Submit, then Print.
 4. **Payment** — on an invoice or customer press **Receive Payment**: amount, mode (Cash / Card / Bank Transfer / Cheque / Other), date, reference. The amount is applied to that customer's **oldest unpaid invoices first**, for that business only. Paying more than owed is refused. A **Receipt** can be printed.
 5. **Statement** — *Statements → New*: company, customer, from/to date → **Refresh**. It lists the invoices of the period **and any older invoice still unpaid**, with the payments received and the **balance due**. Print it and send it to the customer.
@@ -16,6 +16,9 @@ A company's invoices pile up during the month (e.g. 30,000 AED). Next month more
 
 ## Free text
 Nothing is fixed: every quotation or invoice has its own lines and note. The company's default note (for example "Payment will be received with in 30 days…") is only filled in as a starting text and can be changed on each document.
+
+## Customer details
+In *Customers* every row has a **Details** button: contact data and TRN, what each business has quoted / invoiced / received, **still owes**, the latest documents, and buttons for New Quotation, New Invoice, New Statement and Receive Payment.
 
 ## Search and customers
 Use the top search bar for customer names, document numbers and vehicle numbers. *Customers → New* takes name, TRN, address, phone and email.
